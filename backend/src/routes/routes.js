@@ -5,6 +5,7 @@ import { crearCliente, obtenerClientes } from '../controllers/crearCliente.js';
 import { uploadImagenes } from '../controllers/middleware/upload.js';
 import { crearOrdenServicio, obtenerOrdenes } from '../controllers/ordenServicio.controller.js';
 import { buscarClientePorTelefono } from '../controllers/buscarClientePorTelefono.js';
+import { obtenerOrdenPorId } from '../controllers/obtenerOrdenPorId.js';
 
 const router = express.Router();
 
@@ -31,6 +32,7 @@ router.post(
     crearOrdenServicio
 );
 router.get("/ordenServicio", obtenerOrdenes)
+router.get("/ordenServicio/:id", obtenerOrdenPorId )
 
 
 export default router;

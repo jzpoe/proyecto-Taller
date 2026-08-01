@@ -5,6 +5,7 @@ import { Routes, Route } from 'react-router-dom'
 import { MainLayout } from '../layouts/MainLayout'
 import { DashboardPage } from '../DashboardPage/DashboardPage'
 import { OrdenesDeServicio } from '../pages/equipo/OrdenesDeServicio'
+import { DetalleOrdenServicioPage } from '../pages/DetalleOrdenServicioPage'
 
 
 export const AppRoutes = () => {
@@ -19,6 +20,9 @@ export const AppRoutes = () => {
                 <Route path='/equipos' element={<EquiposPage />} />
                 <Route path='/clientes/nuevo' element={<CrearClientePage />} />
                 <Route path='/ordenes' element={<OrdenesDeServicio/>} />
+                <Route  path="/ordenServicio/:id" element={<DetalleOrdenServicioPage/>} />
+
+
             </Route>
         </Routes>
        

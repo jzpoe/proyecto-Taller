@@ -5,12 +5,14 @@ import { Pencil, Trash, ClipboardList } from "lucide-react";
 import { obtenerOrdenes } from "../../api/ordenServicio.api";
 import { generarOrdenPDF } from "../../utils/generarOrdenPDF";
 import { Paginacion } from "../../components/ui/Paginacion";
+import { useNavigate } from "react-router-dom";
 
 export const OrdenesDeServicio = () => {
 
     const [ordenes, setOrdenes] = useState([]);
     const [buscar, setBuscar] = useState("");
     const [paginaActual, setPaginaActual] = useState(1);
+    const navigate = useNavigate();
 
     const registrosPorPagina = 10;
 
@@ -41,7 +43,7 @@ export const OrdenesDeServicio = () => {
 
     }, [buscar]);
 
-    
+
 
     const formatearFecha = (fecha) => {
 
@@ -147,6 +149,8 @@ export const OrdenesDeServicio = () => {
 
                             <th className="px-4 py-3 text-left">Fecha</th>
 
+                            <th className="px-4 py-3 text-center"> Ver </th>
+
                             <th className="px-4 py-3 text-center">Editar</th>
 
                             <th className="px-4 py-3 text-center">Eliminar</th>
@@ -210,6 +214,19 @@ export const OrdenesDeServicio = () => {
                                         <td className="px-4 py-3">
 
                                             {formatearFecha(orden.createdAt)}
+
+                                        </td>
+
+                                        <td className="px-4 py-3">
+
+
+
+                                            <button
+                                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg shadow transition"
+
+                                                onClick={() => navigate(`/ordenServicio/${orden._id}`)} >ver</button>
+
+
 
                                         </td>
 

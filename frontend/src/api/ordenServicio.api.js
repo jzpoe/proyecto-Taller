@@ -23,3 +23,10 @@ export const obtenerOrdenes = async () => {
     return response;
 
 };
+
+export const obtenerOrdenPorId = async (id)=>{
+    const response = await axios.get(
+        `${API}/ordenServicio/${id}`
+    )
+     return response.data;
+}

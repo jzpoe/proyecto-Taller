@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const ordenServicioSchema = new mongoose.Schema(
   {
-  numeroOrden: {
-    type: String,
-    unique: true,
-},
-    
+    numeroOrden: {
+      type: String,
+      unique: true,
+    },
+
 
     cliente: {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,6 +16,12 @@ const ordenServicioSchema = new mongoose.Schema(
 
     estado: {
       type: String,
+      enum: [
+        "Recibido",
+        "En diagnóstico",
+        "Listo para entregar",
+        "Entregado",
+      ],
       default: "Recibido",
     },
 
@@ -63,6 +69,17 @@ const ordenServicioSchema = new mongoose.Schema(
     garantia: {
       type: String,
       default: "",
+    },
+    fechaDiagnostico: {
+      type: Date,
+    },
+    observacionesEntrega: {
+      type: String,
+      default: "",
+    },
+
+    fechaEntrega: {
+      type: Date,
     },
 
     imagenes: [
