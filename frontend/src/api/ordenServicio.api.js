@@ -30,3 +30,17 @@ export const obtenerOrdenPorId = async (id)=>{
     )
      return response.data;
 }
+
+export const actualizarOrdenServicio = async (id, orden) => {
+
+    const response = await axios.put(
+
+        `${API}/ordenServicio/${id}`,
+
+        orden
+
+    );
+
+    return response.data;
+
+};

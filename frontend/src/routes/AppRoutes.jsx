@@ -5,7 +5,7 @@ import { Routes, Route } from 'react-router-dom'
 import { MainLayout } from '../layouts/MainLayout'
 import { DashboardPage } from '../DashboardPage/DashboardPage'
 import { OrdenesDeServicio } from '../pages/equipo/OrdenesDeServicio'
-import { DetalleOrdenServicioPage } from '../pages/DetalleOrdenServicioPage'
+import { DetalleOrdenServicioPage } from '../pages/detalleOrden/DetalleOrdenServicioPage'
 
 
 export const AppRoutes = () => {

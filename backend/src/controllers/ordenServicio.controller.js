@@ -306,4 +306,64 @@ const obtenerOrdenes = async (req, res) => {
 
 };
 
-export { crearOrdenServicio, obtenerOrdenes };
+
+
+const actualizarOrdenServicio = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const ordenActualizada = await OrdenServicio.findByIdAndUpdate(
+
+            id,
+
+            req.body,
+
+            {
+                returnDocument: "after"
+            }
+
+        ).populate("cliente");
+
+        if (!ordenActualizada) {
+
+            return res.status(404).json({
+
+                ok: false,
+
+                mensaje: "Orden no encontrada."
+
+            });
+
+        }
+
+        return res.json({
+
+            ok: true,
+
+            mensaje: "Orden actualizada correctamente.",
+
+            orden: ordenActualizada
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+
+            ok: false,
+
+            mensaje: "Error al actualizar la orden."
+
+        });
+
+    }
+
+};
+
+
+
+export { crearOrdenServicio, obtenerOrdenes, actualizarOrdenServicio };
