@@ -6,6 +6,8 @@ import { uploadImagenes } from '../controllers/middleware/upload.js';
 import { actualizarOrdenServicio, crearOrdenServicio, obtenerOrdenes } from '../controllers/ordenServicio.controller.js';
 import { buscarClientePorTelefono } from '../controllers/buscarClientePorTelefono.js';
 import { obtenerOrdenPorId } from '../controllers/obtenerOrdenPorId.js';
+import { register } from '../controllers/auth/register.js';
+import { login } from '../controllers/auth/login.js';
 
 const router = express.Router();
 
@@ -34,6 +36,9 @@ router.post(
 router.get("/ordenServicio", obtenerOrdenes)
 router.get("/ordenServicio/:id", obtenerOrdenPorId )
 router.put("/ordenServicio/:id",actualizarOrdenServicio);
+
+router.post("/registrar", register);
+router.get("/login", login)
 
 
 export default router;
