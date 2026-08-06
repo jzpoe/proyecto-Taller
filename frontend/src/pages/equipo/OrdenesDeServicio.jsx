@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { SearchBar } from "../../components/ui/SearchBar";
 import { BadgeEstado } from "../../components/ui/BadgeEstado";
 import { Pencil, Trash, ClipboardList } from "lucide-react";
-import { obtenerOrdenes } from "../../api/ordenServicio.api";
+import { actualizarOrdenServicio, eliminarEquipoOrdenServicio, obtenerOrdenes } from "../../api/ordenServicio.api";
 import { generarOrdenPDF } from "../../utils/generarOrdenPDF";
 import { Paginacion } from "../../components/ui/Paginacion";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 export const OrdenesDeServicio = () => {
 
@@ -31,6 +33,39 @@ export const OrdenesDeServicio = () => {
         }
 
     };
+
+    const handleEliminar = async (equipos_id) => {
+
+        try {
+            const resultado = await Swal.fire({
+                icon: "warning",
+
+                title: "¿Está seguro?",
+
+                text: "Esta acción no se puede deshacer.",
+
+                showCancelButton: true,
+
+                confirmButtonText: "Sí, eliminar",
+
+                cancelButtonText: "Cancelar"
+            })
+            if (resultado.isConfirmed) {
+
+                await eliminarEquipoOrdenServicio(equipos_id)
+                cargarOrdenes()
+                toast.success('El equipo se ha eliminado correctamente.');
+
+            }
+
+        } catch (error) {
+            console.error("error al elimianr el equipo seleccionado", error)
+        }
+
+    }
+
+
+
 
     useEffect(() => {
 
@@ -151,9 +186,10 @@ export const OrdenesDeServicio = () => {
 
                             <th className="px-4 py-3 text-center"> Ver </th>
 
-                            <th className="px-4 py-3 text-center">Editar</th>
+                            {/* <th className="px-4 py-3 text-center">Editar</th> */}
 
                             <th className="px-4 py-3 text-center">Eliminar</th>
+                            <th className="px-4 py-3 text-center">Descargar PDF</th>
 
                         </tr>
 
@@ -230,47 +266,46 @@ export const OrdenesDeServicio = () => {
 
                                         </td>
 
-                                        <td className="text-center">
+                                        {/* <td className="text-center">
 
                                             <button
-
-                                                onClick={() => console.log("Editar:", orden)}
-
+                                                onClick={() => navigate(`/ordenServicio/${orden._id}`)}
                                                 className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg shadow transition"
-
                                             >
-
                                                 <Pencil size={18} />
-
                                             </button>
 
-                                        </td>
+                                        </td> */}
 
                                         <td className="text-center">
-
-                                            <button
-
-                                                onClick={() => console.log("Eliminar:", orden._id)}
-
-                                                className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg shadow transition"
-
-                                            >
-
-                                                <Trash size={18} />
-
-                                            </button>
 
                                             <button
                                                 onClick={() => {
-                                                    console.log(orden);
-                                                    generarOrdenPDF(orden);
+                                                    console.log("ID:", orden._id);
+                                                    handleEliminar(orden._id);
                                                 }}
-                                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                                                className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg shadow transition"
                                             >
-                                                PDF
+
+                                                <Trash size={20} />
+
                                             </button>
 
+                                            
+
+
                                         </td>
+                                        <td className="text-center">
+                                                <button
+                                                    onClick={() => {
+                                                        console.log(orden);
+                                                        generarOrdenPDF(orden);
+                                                    }}
+                                                    className="bg-blue-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                                                >
+                                                    PDF
+                                                </button>
+                                            </td>
 
                                     </tr>
 

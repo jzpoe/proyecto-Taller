@@ -1,4 +1,5 @@
 
+import mongoose from "mongoose";
 import Cliente from "../models/cliente.model.js";
 import OrdenServicio from "../models/ordenServicio.model.js";
 import { obtenerSiguienteNumero } from "../services/counter.service.js";
@@ -364,6 +365,69 @@ const actualizarOrdenServicio = async (req, res) => {
 
 };
 
+const eliminarequipoorden =async(req, res)=>{
+    try {
+            const id_eliminar = req.params.id
+            console.log("id seleccionado en cackend", id_eliminar)
+    
+            if (!mongoose.isValidObjectId(id_eliminar)) {
+                return res.status(400).json({
+                    message: "ID inválido"
+                });
+                console.log("id valido:", id_eliminar )
+            }
+            console.log("id valido:", id_eliminar )
+    
+            const objeroEliminado = await OrdenServicio.findByIdAndDelete(
+                id_eliminar
+            );
+    
+            console.log("id eiminado en backend", objeroEliminado)
+            return res.status(200).json({ message: "Equipo eliminado con extito" })
+        } catch (err) {
+            console.error("Error al eliminar el equipo:", err);
+            return res.status(500).json({ message: "Error al eliminar" });
+        }
+}
+
+export const editarOrdenes =async(req, res)=>{
+    try {
+            const idParaActualizar = req.params.id
+            const bodyParaActualizar = req.body
+    
+            //VALIDAR SI EL ID TIENE FORMATO VALIDO
+    
+            if (!mongoose.isValidObjectId(idParaActualizar)) {
+                return res.status(400).json({
+                    message: "ID inválido"
+                });
+            }
+    
+            //no permitir modificar el serial
+            // if (req.body.serial) {
+            //     return res.status(400).json({
+            //         message: "El serial no puede ser modificado"
+            //     })
+            // }
+            //actualizar documento 
+            const equipoActualizado = await Equipo.findByIdAndUpdate(
+                idParaActualizar,
+                bodyParaActualizar,
+                { new: true }
+            );
+    
+            if (!equipoActualizado) {
+    
+                return res.status(404).json
+                    ({ message: "equipo ingresado no se encuentra en la base de datos" })
+            } else {
+                return res.status(200).json(equipoActualizado)
+            }
+        } catch (err) {
+            console.error("Error al actualizar el equipo:", err);
+            return res.status(500).json({ message: "Error al encontrar" });
+        }
+}
 
 
-export { crearOrdenServicio, obtenerOrdenes, actualizarOrdenServicio };
+export { crearOrdenServicio, obtenerOrdenes, actualizarOrdenServicio, eliminarequipoorden };

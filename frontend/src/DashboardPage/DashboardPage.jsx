@@ -13,7 +13,7 @@ import { InputEditarEquipo } from "./InputEditarEquipo";
 import toast, { Toaster } from 'react-hot-toast';
 import Swal from "sweetalert2";
 import { FormularioOrdenServicio } from "../pages/FormularioOrdenServicio";
-import { crearOrdenServicio, obtenerOrdenes } from "../api/ordenServicio.api";
+import { crearOrdenServicio, eliminarEquipoOrdenServicio, obtenerOrdenes } from "../api/ordenServicio.api";
 import { obtenerClientes } from "../api/cliente.api";
 
 
@@ -98,7 +98,7 @@ export const DashboardPage = () => {
 
 
 
-    const selectEliminarEquipo = async (equipos_id) => {
+    const handleEliminar = async (equipos_id) => {
 
 
         try {
@@ -117,8 +117,9 @@ export const DashboardPage = () => {
                 cancelButtonText: "Cancelar"
             })
             if (resultado.isConfirmed) {
-                await eliminarEquipoBackend(equipos_id)
-                cargarEquipos();
+                
+                await eliminarEquipoOrdenServicio(equipos_id)
+                cargarOrdenes()
                 toast.success('El equipo se ha eliminado correctamente.');
 
             }
@@ -142,6 +143,7 @@ export const DashboardPage = () => {
         cargarEquipos()
         cargarClientes()
         cargarOrdenes()
+        obtenerOrdenes()
 
     }, [])
 
@@ -274,7 +276,7 @@ export const DashboardPage = () => {
                 onEquipoCreado={cargarEquipos}
                 ultimosEquipos={equipos}
                 onEditar={editarEquipo}
-                OnEliminar={selectEliminarEquipo}
+                onEliminar={handleEliminar}
                 ordenes={ordenes}
 
             />

@@ -3,7 +3,7 @@ import { actualizarEquipo, createEquipo, eliminarEquipo, encontrarEquipoID, getE
 import asignacionEquipo from '../controllers/asignacionEquipo.js';
 import { crearCliente, obtenerClientes } from '../controllers/crearCliente.js';
 import { uploadImagenes } from '../controllers/middleware/upload.js';
-import { actualizarOrdenServicio, crearOrdenServicio, obtenerOrdenes } from '../controllers/ordenServicio.controller.js';
+import { actualizarOrdenServicio, crearOrdenServicio, eliminarequipoorden, obtenerOrdenes } from '../controllers/ordenServicio.controller.js';
 import { buscarClientePorTelefono } from '../controllers/buscarClientePorTelefono.js';
 import { obtenerOrdenPorId } from '../controllers/obtenerOrdenPorId.js';
 import { register } from '../controllers/auth/register.js';
@@ -36,6 +36,7 @@ router.post(
 router.get("/ordenServicio", obtenerOrdenes)
 router.get("/ordenServicio/:id", obtenerOrdenPorId )
 router.put("/ordenServicio/:id",actualizarOrdenServicio);
+router.delete("/ordenServicio/:id",eliminarequipoorden)
 
 router.post("/registrar", register);
 router.get("/login", login)

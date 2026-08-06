@@ -109,18 +109,21 @@ const eliminarEquipo = async (req, res) => {
 
     try {
         const id_eliminar = req.params.id
-        console.log(id_eliminar)
+        console.log("id seleccionado en cackend", id_eliminar)
 
         if (!mongoose.isValidObjectId(id_eliminar)) {
             return res.status(400).json({
                 message: "ID inválido"
             });
+            console.log("id valido:", id_eliminar )
         }
-
+        console.log("id valido:", id_eliminar )
 
         const objeroEliminado = await Equipo.findByIdAndDelete(
             id_eliminar
         );
+
+        console.log("id eiminado en backend", objeroEliminado)
         return res.status(200).json({ message: "Equipo eliminado con extito" })
     } catch (err) {
         console.error("Error al eliminar el equipo:", err);

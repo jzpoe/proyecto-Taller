@@ -37,7 +37,9 @@ export const eliminarEquipoBackend = async (equipos_id) => {
 
     try {
         const response = await axios.delete(`${API}/equipo/${equipos_id}`)
+         console.log(response.data);
         return response.data
+       
 
     } catch (error) {
         console.error("error al eliminar equipo", error)

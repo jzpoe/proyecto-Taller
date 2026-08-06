@@ -44,3 +44,11 @@ export const actualizarOrdenServicio = async (id, orden) => {
     return response.data;
 
 };
+
+export const eliminarEquipoOrdenServicio=async (equipo_id)=>{
+
+    const response = await axios.delete(
+         `${API}/ordenServicio/${equipo_id}`
+    )
+
+}

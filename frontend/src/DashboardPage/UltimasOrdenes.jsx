@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Pencil, Trash, ClipboardList } from "lucide-react";
 import { BadgeEstado } from "../components/ui/BadgeEstado";
 import { SearchBar } from "../components/ui/SearchBar";
+import { useNavigate } from "react-router-dom";
 
 export const UltimasOrdenes = ({
     ordenes = [],
@@ -11,7 +12,7 @@ export const UltimasOrdenes = ({
 
 
     const [buscar, setBuscar] = useState("");
-
+const navigate = useNavigate();
 
 
     const formatearFecha = (fecha) => {
@@ -101,9 +102,9 @@ export const UltimasOrdenes = ({
 
                             <th className="px-4 py-3 text-left">Fecha</th>
 
-                            <th className="px-4 py-3 text-left">Editar</th>
+                            <th className="px-4 py-3 text-left">Ver</th>
 
-                            <th className="px-4 py-3 text-left">Eliminar</th>
+                            {/* <th className="px-4 py-3 text-left">Eliminar</th> */}
 
                         </tr>
 
@@ -166,9 +167,9 @@ export const UltimasOrdenes = ({
 
                                         <td>
 
-                                            <button
+                                            {/* <button
 
-                                                onClick={() => onEditar?.(orden)}
+                                                onClick={() =>  onEditar?.(orden)}
 
                                                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition-all duration-200 hover:scale-105"
 
@@ -176,13 +177,20 @@ export const UltimasOrdenes = ({
 
                                                 <Pencil size={18} />
 
+                                            </button> */}
+
+                                            <button
+                                                onClick={() => navigate(`/ordenServicio/${orden._id}`)}
+                                                className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg shadow transition"
+                                            >
+                                                <Pencil size={18} />
                                             </button>
 
                                         </td>
 
                                         <td>
 
-                                            <button
+                                            {/* <button
 
                                                 onClick={() => onEliminar?.(orden._id)}
 
@@ -192,7 +200,7 @@ export const UltimasOrdenes = ({
 
                                                 <Trash size={18} />
 
-                                            </button>
+                                            </button> */}
 
                                         </td>
 
