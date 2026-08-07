@@ -12,9 +12,9 @@ const login = async (req, res) => {
         
         const { usuario, contrasena } = req.body;
 
-        const Usuario = await Usuario.findOne({ usuario });
+        const usuarioRegistrado = await Usuario.findOne({ usuario });
 
-        if (!Usuario) {
+        if (!usuarioRegistrado) {
 
             return res.status(404).json({
 
@@ -30,7 +30,7 @@ const login = async (req, res) => {
 
             contrasena,
 
-            usuario.contrasena
+            usuarioRegistrado.contrasena
 
         );
 
@@ -48,11 +48,11 @@ const login = async (req, res) => {
         const token = jwt.sign(
 
             {
-                id: Usuario._id,
+                id: usuarioRegistrado._id,
 
-                nombre: Usuario.nombre,
+                nombre: usuarioRegistrado.nombre,
 
-                rol: Usuario.rol
+                rol: usuario.rol
             },
 
             process.env.JWT_SECRET,
@@ -68,10 +68,10 @@ const login = async (req, res) => {
             message: "Inicio de sesión exitoso.",
             token,
             Usuario: {
-                id: Usuario._id,
-                nombre: Usuario.nombre,
-                correo: Usuario.correo,
-                rol: Usuario.rol
+                id: usuarioRegistrado._id,
+                nombre: usuarioRegistrado.nombre,
+                correo: usuarioRegistrado.correo,
+                rol: usuarioRegistrado.rol
 
             }
 
