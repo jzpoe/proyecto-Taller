@@ -9,12 +9,12 @@ import bcrypt from "bcrypt"
 const login = async (req, res) => {
 
     try {
-        console.log("Body:", req.body);
+        
         const { usuario, contrasena } = req.body;
 
-        
+
         const usuarioRegistrado = await Usuario.findOne({ usuario });
-console.log("Usuario encontrado:", usuarioRegistrado);
+        
         if (!usuarioRegistrado) {
 
             return res.status(404).json({
@@ -68,8 +68,8 @@ console.log("Usuario encontrado:", usuarioRegistrado);
             ok: true,
             message: "Inicio de sesión exitoso.",
             token,
-            Usuario: {
-                id: usuarioRegistrado._id,
+            usuario: {
+                
                 nombre: usuarioRegistrado.nombre,
                 usuario: usuarioRegistrado.usuario,
                 rol: usuarioRegistrado.rol

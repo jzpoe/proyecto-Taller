@@ -3,7 +3,7 @@ import { Input } from "../../components/ui/Input";
 import { inicioSesion } from "../../api/auth.api";
 import { useNavigate } from "react-router-dom";
 import { MonitorSmartphone, LogIn } from "lucide-react";
-
+import { useAuth } from "../../hooks/useAuth";
 import logo from "../../assets/logo.png";
 import toast from "react-hot-toast";
 
@@ -14,12 +14,9 @@ export const LoginPage = () => {
         contrasena: ""
     });
     const navigate = useNavigate();
-
-
-
+    const { login: iniciarSesionContext } = useAuth();
 
     const handleChange = (e) => {
-
 
         const { name, value } = e.target
 
@@ -32,15 +29,9 @@ export const LoginPage = () => {
         try {
             const response = await inicioSesion(login)
 
-            localStorage.setItem(
-                "token",
-                response.token
-            );
-
-            localStorage.setItem(
-                "usuario",
-                JSON.stringify(response.usuario)
-            );
+            iniciarSesionContext(response);
+            console.log(response)
+            console.log(response.Usuario)
 
             toast.success('Bienvenido');
             navigate("/");
@@ -50,7 +41,6 @@ export const LoginPage = () => {
 
         }
     }
-
 
     return (
         <div className="min-h-screen bg-slate-100 flex items-center justify-center p-8">
@@ -68,8 +58,6 @@ export const LoginPage = () => {
                         className="w-44 mb-8"
 
                     />
-
-                    
 
                     <p className="mt-6 text-center text-blue-100 leading-7">
 
