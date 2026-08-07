@@ -1,5 +1,6 @@
 
 import axios from "axios"
+import { AudioWaveform } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -51,4 +52,13 @@ export const eliminarEquipoOrdenServicio=async (equipo_id)=>{
          `${API}/ordenServicio/${equipo_id}`
     )
 
+}
+
+export const actualizarCliente = async(id, cliente)=>{
+
+    const response = await axios.put(
+        `${API}/cliente/${id}`,
+        cliente
+    )
+    return response.data;
 }

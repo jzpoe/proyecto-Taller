@@ -5,7 +5,6 @@ const obtenerOrdenPorId = async (req, res) => {
 
     try {
         const id = req.params.id
-        console.log(id)
 
         const ordenServicio = await OrdenServicio.findById(id).populate('cliente')
 

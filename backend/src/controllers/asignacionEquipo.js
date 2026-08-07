@@ -31,7 +31,7 @@ const asignacionEquipo = async (req, res) => {
         }
 
         const validarCliente = await Cliente.findById(cliente)
-        console.log("validar el id validar cliente", validarCliente)
+        
         if (!validarCliente) {
             return res.status(400).json({
                 message: "El cliente no existe "
@@ -39,7 +39,6 @@ const asignacionEquipo = async (req, res) => {
         }
 
         if (validarCliente.estado != "activo") {
-            console.log("validar cliente: ", validarCliente)
             return res.status(400).json({
                 message: "El cliente no esta activo"
             })
@@ -57,7 +56,7 @@ const asignacionEquipo = async (req, res) => {
             tipoMovimiento: "Asignacion",
 
         })
-        console.log(nuevoMovimiento);
+        
         await nuevoMovimiento.save();
         return res.status(200).json({
             message: "Equipo asignado exitosamente"

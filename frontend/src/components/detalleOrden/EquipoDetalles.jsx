@@ -1,7 +1,8 @@
 import { UserRound } from "lucide-react";
+import { Input } from "../ui/Input";
 
 
-export const EquipoDetalles = ({ orden }) => {
+export const EquipoDetalles = ({ orden, handleChange }) => {
 
     return (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
@@ -31,23 +32,25 @@ export const EquipoDetalles = ({ orden }) => {
 
                     </p>
 
-                    <p className="font-semibold">
-
-                        {orden.tipoEquipo}
-
-                    </p>
-
+                    <Input
+                       label="Tipo de Equipo"
+                       name="tipoEquipo"
+                       value={orden.tipoEquipo || ""}
+                       onChange={handleChange}
+                     />
+                   
                 </div>
                 <h2 className="text-sm text-gray-500">
 
                     Marca
 
                 </h2>
-                <p className="font-semibold">
-
-                    {orden.marca}
-
-                </p>
+                  <Input
+                       label="Marca"
+                       name="marca"
+                       value={orden.marca || ""}
+                       onChange={handleChange}
+                     />
                 <div>
 
                     <p className="text-sm text-gray-500">
@@ -56,11 +59,12 @@ export const EquipoDetalles = ({ orden }) => {
 
                     </p>
 
-                    <p className="font-semibold">
-
-                        {orden.serial}
-
-                    </p>
+                      <Input
+                       label="Serial"
+                       name="serial"
+                       value={orden.serial || ""}
+                       onChange={handleChange}
+                     />
 
                 </div>
 
@@ -72,11 +76,12 @@ export const EquipoDetalles = ({ orden }) => {
 
                     </p>
 
-                    <p className="font-semibold">
-
-                        {orden.modelo || "No registrado"}
-
-                    </p>
+                     <Input
+                       label="Modelo"
+                       name="modelo"
+                       value={orden.modelo || ""}
+                       onChange={handleChange}
+                     />
 
                 </div>
 

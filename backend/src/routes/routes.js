@@ -8,6 +8,7 @@ import { buscarClientePorTelefono } from '../controllers/buscarClientePorTelefon
 import { obtenerOrdenPorId } from '../controllers/obtenerOrdenPorId.js';
 import { register } from '../controllers/auth/register.js';
 import { login } from '../controllers/auth/login.js';
+import { actualizarCliente } from '../controllers/actualizarCliente.js';
 
 const router = express.Router();
 
@@ -36,10 +37,12 @@ router.post(
 router.get("/ordenServicio", obtenerOrdenes)
 router.get("/ordenServicio/:id", obtenerOrdenPorId )
 router.put("/ordenServicio/:id",actualizarOrdenServicio);
+router.put("/cliente/:id",actualizarCliente);
+router.put("/equipo/:id", actualizarEquipo)
 router.delete("/ordenServicio/:id",eliminarequipoorden)
 
 router.post("/registrar", register);
-router.get("/login", login)
+router.post("/login", login)
 
 
 export default router;

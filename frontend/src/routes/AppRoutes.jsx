@@ -6,26 +6,45 @@ import { MainLayout } from '../layouts/MainLayout'
 import { DashboardPage } from '../DashboardPage/DashboardPage'
 import { OrdenesDeServicio } from '../pages/equipo/OrdenesDeServicio'
 import { DetalleOrdenServicioPage } from '../pages/detalleOrden/DetalleOrdenServicioPage'
+import { LoginPage } from '../pages/login/LoginPage'
+import { ProtectedRoute } from './ProtectedRoute'
 
 
 export const AppRoutes = () => {
-    
+
 
     return (
-       
-        <Routes>
-            <Route element={<MainLayout/>}>
-                <Route path="/" element={<DashboardPage  />} />
-                <Route path='/clientes' element={<ClientesPage />} />
-                <Route path='/equipos' element={<EquiposPage />} />
-                <Route path='/clientes/nuevo' element={<CrearClientePage />} />
-                <Route path='/ordenes' element={<OrdenesDeServicio/>} />
-                <Route  path="/ordenServicio/:id" element={<DetalleOrdenServicioPage/>} />
 
+        <Routes>
+            {/* Ruta pública */}
+            <Route path="/login" element={<LoginPage />} />
+
+            {/* Rutas protegidas */}
+            <Route element={<ProtectedRoute />}>
+
+                <Route element={<MainLayout />}>
+
+                    <Route path="/" element={<DashboardPage />} />
+
+                    <Route path="/clientes" element={<ClientesPage />} />
+
+                    <Route path="/equipos" element={<EquiposPage />} />
+
+                    <Route path="/clientes/nuevo" element={<CrearClientePage />} />
+
+                    <Route path="/ordenes" element={<OrdenesDeServicio />} />
+
+                    <Route
+                        path="/ordenServicio/:id"
+                        element={<DetalleOrdenServicioPage />}
+                    />
+
+                </Route>
 
             </Route>
+
         </Routes>
-       
+
     )
 
 }

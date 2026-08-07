@@ -1,6 +1,7 @@
 import { UserRound } from "lucide-react";
+import { Input } from "../ui/Input";
 
-export const ClienteCard = ({ cliente }) => {
+export const ClienteCard = ({ cliente, handleChange }) => {
 
     return (
 
@@ -31,11 +32,12 @@ export const ClienteCard = ({ cliente }) => {
 
                     </p>
 
-                    <p className="font-semibold">
-
-                        {cliente.nombre}
-
-                    </p>
+                    <Input
+                        label="Nombre"
+                        name="nombre"
+                        value={cliente.nombre}
+                        onChange={handleChange}
+                    />
 
                 </div>
 
@@ -47,11 +49,12 @@ export const ClienteCard = ({ cliente }) => {
 
                     </p>
 
-                    <p className="font-semibold">
-
-                        {cliente.telefono}
-
-                    </p>
+                    <Input
+                        label="Teléfono"
+                        name="telefono"
+                        value={cliente.telefono || ""}
+                        onChange={handleChange}
+                    />
 
                 </div>
 
@@ -63,11 +66,12 @@ export const ClienteCard = ({ cliente }) => {
 
                     </p>
 
-                    <p className="font-semibold">
-
-                        {cliente.correo || "No registrado"}
-
-                    </p>
+                    <Input
+                        label="Correo"
+                        name="correo"
+                        value={cliente.correo || ""}
+                        onChange={handleChange}
+                    />
 
                 </div>
 

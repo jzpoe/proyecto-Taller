@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { actualizarOrdenServicio, obtenerOrdenPorId } from "../../api/ordenServicio.api";
+import { actualizarCliente, actualizarOrdenServicio, obtenerOrdenPorId } from "../../api/ordenServicio.api";
 import { EstadoCard } from "../../components/detalleOrden/EstadoCard";
 import { ClienteCard } from "../../components/detalleOrden/ClienteCard";
 import { EquipoDetalles } from "../../components/detalleOrden/EquipoDetalles";
@@ -21,6 +21,12 @@ export const DetalleOrdenServicioPage = () => {
     const handleGuardar = async () => {
 
         try {
+
+            await actualizarCliente(
+                orden.cliente._id,
+                orden.cliente
+            )
+
 
             const response = await actualizarOrdenServicio(
                 orden._id,
@@ -51,7 +57,7 @@ export const DetalleOrdenServicioPage = () => {
             const orden = await obtenerOrdenPorId(id);
 
             setOrden(orden.ordenServicio);
-            console.log(orden.ordenServicio)
+            
 
         } catch (error) {
 
@@ -87,6 +93,32 @@ export const DetalleOrdenServicioPage = () => {
 
     };
 
+    
+
+    const handleClienteChange = (e) => {
+
+     const { name, value } = e.target;
+
+     setOrden((prev) => ({
+
+        ...prev,
+
+        cliente: {
+
+            ...prev.cliente,
+
+            [name]: value
+
+        }
+
+    }));
+
+    
+
+   
+
+};
+
     return (
 
         <div className="bg-gray-100 min-h-screen p-6 space-y-6">
@@ -112,8 +144,12 @@ export const DetalleOrdenServicioPage = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                <ClienteCard cliente={orden.cliente} />
-                <EquipoDetalles orden={orden} />
+                <ClienteCard cliente={orden.cliente}
+                handleChange={handleClienteChange}
+                 />
+                <EquipoDetalles orden={orden}
+                handleChange={handleChange}
+                />
 
 
             </div>

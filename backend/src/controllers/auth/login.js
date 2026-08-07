@@ -9,7 +9,8 @@ import bcrypt from "bcrypt"
 const login = async (req, res) => {
 
     try {
-
+        console.log("====== ENTRÓ AL LOGIN ======");
+        console.log(req.body);
         const { correo, contrasena } = req.body;
 
         const usuario = await Usuario.findOne({ correo });
@@ -44,42 +45,38 @@ const login = async (req, res) => {
 
             });
 
-        } else {
-            const token = jwt.sign(
-
-                {
-                    id: usuario._id,
-
-                    nombre: usuario.nombre,
-
-                    rol: usuario.rol
-                },
-
-                process.env.JWT_SECRET,
-                {
-
-                    expiresIn: "8h"
-
-                }
-            );
-            return res.status(200).json({
-
-                ok: true,
-                message: "Inicio de sesión exitoso.",
-                token,
-                usuario: {
-                    id: usuario._id,
-                    nombre: usuario.nombre,
-                    correo: usuario.correo,
-                    rol: usuario.rol
-
-                }
-
-            });
-
         }
+        const token = jwt.sign(
 
+            {
+                id: usuario._id,
 
+                nombre: usuario.nombre,
+
+                rol: usuario.rol
+            },
+
+            process.env.JWT_SECRET,
+            {
+
+                expiresIn: "8h"
+
+            }
+        );
+        return res.status(200).json({
+
+            ok: true,
+            message: "Inicio de sesión exitoso.",
+            token,
+            usuario: {
+                id: usuario._id,
+                nombre: usuario.nombre,
+                correo: usuario.correo,
+                rol: usuario.rol
+
+            }
+
+        });
 
 
     } catch (error) {
