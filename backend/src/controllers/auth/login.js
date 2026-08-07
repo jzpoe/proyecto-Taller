@@ -9,11 +9,12 @@ import bcrypt from "bcrypt"
 const login = async (req, res) => {
 
     try {
-        
+        console.log("Body:", req.body);
         const { usuario, contrasena } = req.body;
 
+        
         const usuarioRegistrado = await Usuario.findOne({ usuario });
-
+console.log("Usuario encontrado:", usuarioRegistrado);
         if (!usuarioRegistrado) {
 
             return res.status(404).json({
@@ -52,7 +53,7 @@ const login = async (req, res) => {
 
                 nombre: usuarioRegistrado.nombre,
 
-                rol: usuario.rol
+                rol: usuarioRegistrado.rol
             },
 
             process.env.JWT_SECRET,
@@ -70,7 +71,7 @@ const login = async (req, res) => {
             Usuario: {
                 id: usuarioRegistrado._id,
                 nombre: usuarioRegistrado.nombre,
-                correo: usuarioRegistrado.correo,
+                usuario: usuarioRegistrado.usuario,
                 rol: usuarioRegistrado.rol
 
             }

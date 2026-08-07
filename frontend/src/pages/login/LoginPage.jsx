@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 export const LoginPage = () => {
     const [login, setLogin] = useState({
-        correo: "",
+        usuario: "",
         contrasena: ""
     });
     const navigate = useNavigate();
@@ -113,11 +113,11 @@ export const LoginPage = () => {
 
                         <Input
 
-                            label="Correo"
+                            label="Usuario"
 
-                            name="correo"
+                            name="usuario"
 
-                            value={login.correo}
+                            value={login.usuario}
 
                             onChange={handleChange}
 
