@@ -9,13 +9,12 @@ import bcrypt from "bcrypt"
 const login = async (req, res) => {
 
     try {
-        console.log("====== ENTRÓ AL LOGIN ======");
-        console.log(req.body);
-        const { correo, contrasena } = req.body;
+        
+        const { usuario, contrasena } = req.body;
 
-        const usuario = await Usuario.findOne({ correo });
+        const Usuario = await Usuario.findOne({ usuario });
 
-        if (!usuario) {
+        if (!Usuario) {
 
             return res.status(404).json({
 
@@ -49,11 +48,11 @@ const login = async (req, res) => {
         const token = jwt.sign(
 
             {
-                id: usuario._id,
+                id: Usuario._id,
 
-                nombre: usuario.nombre,
+                nombre: Usuario.nombre,
 
-                rol: usuario.rol
+                rol: Usuario.rol
             },
 
             process.env.JWT_SECRET,
@@ -68,11 +67,11 @@ const login = async (req, res) => {
             ok: true,
             message: "Inicio de sesión exitoso.",
             token,
-            usuario: {
-                id: usuario._id,
-                nombre: usuario.nombre,
-                correo: usuario.correo,
-                rol: usuario.rol
+            Usuario: {
+                id: Usuario._id,
+                nombre: Usuario.nombre,
+                correo: Usuario.correo,
+                rol: Usuario.rol
 
             }
 
