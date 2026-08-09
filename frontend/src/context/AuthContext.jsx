@@ -1,22 +1,77 @@
 import { createContext } from "react";
 import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
+
+const tokenValido = (token) => {
+
+    if (!token) {
+        return false;
+    }
+
+    try {
+
+        const datosToken = jwtDecode(token);
+
+        const tiempoActual = Date.now() / 1000;
+
+        return datosToken.exp > tiempoActual;
+
+    } catch (error) {
+
+        console.error("Token inválido:", error);
+
+        return false;
+
+    }
+
+};
 
 export const AuthProvider = ({ children }) => {
     const [usuario, setUsuario] = useState(() => {
 
-        const usuarioStorage = localStorage.getItem("usuario");
+          const tokenGuardado =
+        localStorage.getItem("token");
 
-        return usuarioStorage
-            ? JSON.parse(usuarioStorage)
-            : null;
+    const usuarioStorage =
+        localStorage.getItem("usuario");
 
-    });
+    if (
+        !tokenGuardado ||
+        !tokenValido(tokenGuardado)
+    ) {
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("usuario");
+
+        return null;
+
+    }
+
+    return usuarioStorage
+        ? JSON.parse(usuarioStorage)
+        : null;
+
+});
 
     const [token, setToken] = useState(() => {
 
-        return localStorage.getItem("token");
+        const tokenGuardado = localStorage.getItem("token");
+
+    if (!tokenGuardado) {
+        return null;
+    }
+
+    if (!tokenValido(tokenGuardado)) {
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("usuario");
+
+        return null;
+    }
+
+    return tokenGuardado;
 
     });
 
