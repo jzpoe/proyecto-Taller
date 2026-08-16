@@ -1,17 +1,17 @@
-import axios from "axios"
+import api from "./axiosConfig";
 
 const API = import.meta.env.VITE_API_URL;
 
 export const obtenerEquipos = () => {
-    return axios.get(`${API}/equipos`)
+    return api.get(`/equipos`)
     obtenerEquipos()
 }
 
 
 export const asignarEquipoId = async (equipoSeleccionado, clienteSeleccionado) => {
     
-        const response = await axios.post(
-            `${API}/equipo/${equipoSeleccionado}/asignar`,
+        const response = await api.post(
+            `/equipo/${equipoSeleccionado}/asignar`,
             {
                 cliente: clienteSeleccionado
             }
@@ -25,7 +25,7 @@ export const asignarEquipoId = async (equipoSeleccionado, clienteSeleccionado) =
 export const agregarEquipos = async (equipos) => {
 
    
-        const response = await axios.post(`${API}/equipos`,
+        const response = await api.post(`/equipos`,
             equipos
         )
         return response;
@@ -36,7 +36,7 @@ export const agregarEquipos = async (equipos) => {
 export const eliminarEquipoBackend = async (equipos_id) => {
 
     try {
-        const response = await axios.delete(`${API}/equipo/${equipos_id}`)
+        const response = await api.delete(`/equipo/${equipos_id}`)
          console.log(response.data);
         return response.data
        
@@ -52,9 +52,9 @@ export const editarEquipoBackend = async (equipo) => {
 
     try {
 
-        const response = await axios.put(
+        const response = await api.put(
 
-            `${API}/equipo/${equipo._id}`,
+            `/equipo/${equipo._id}`,
 
             equipo
 

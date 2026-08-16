@@ -9,11 +9,12 @@ import { obtenerOrdenPorId } from '../controllers/obtenerOrdenPorId.js';
 import { register } from '../controllers/auth/register.js';
 import { login } from '../controllers/auth/login.js';
 import { actualizarCliente } from '../controllers/actualizarCliente.js';
+import { verificarToken } from '../controllers/middleware/authMiddleware.js';
 
 const router = express.Router();
 
 
-router.get('/equipos', getEquipos)
+router.get('/equipos', verificarToken, getEquipos)
 router.post('/equipos', uploadImagenes.array("imagen", 10), createEquipo)
 router.get('/equipo/:id', encontrarEquipoID)
 router.put('/equipo/:id', actualizarEquipo)
@@ -22,11 +23,11 @@ router.delete('/equipo/:id', eliminarEquipo)
 router.post('/equipo/:id/asignar', asignacionEquipo)
 
 //URL para CREAR CLIENTES
-router.post('/cliente', crearCliente)
+router.post('/cliente',verificarToken, crearCliente)
 router.get('/clientes', obtenerClientes)
 
 //orden de servicio
-router.post("/orden", crearOrdenServicio);
+router.post("/orden", verificarToken, crearOrdenServicio);
 
 router.get("/telefono/:telefono", buscarClientePorTelefono)
 router.post(
@@ -34,9 +35,9 @@ router.post(
     uploadImagenes.array("imagenes", 10),
     crearOrdenServicio
 );
-router.get("/ordenServicio", obtenerOrdenes)
-router.get("/ordenServicio/:id", obtenerOrdenPorId )
-router.put("/ordenServicio/:id",actualizarOrdenServicio);
+router.get("/ordenServicio", verificarToken, obtenerOrdenes)
+router.get("/ordenServicio/:id",verificarToken,  obtenerOrdenPorId )
+router.put("/ordenServicio/:id",verificarToken, actualizarOrdenServicio);
 router.put("/cliente/:id",actualizarCliente);
 router.put("/equipo/:id", actualizarEquipo)
 router.delete("/ordenServicio/:id",eliminarequipoorden)

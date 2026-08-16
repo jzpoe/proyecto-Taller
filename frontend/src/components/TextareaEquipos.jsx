@@ -3,7 +3,7 @@ export const TextareaEquipos = ({
     name,
     placeholder,
     value,
-    onchange,
+    onChange,
     className = ""
 }) => {
 

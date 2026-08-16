@@ -1,11 +1,9 @@
-import { useState } from "react"
-import { Input } from "../ui/Input"
-import axios from "axios"
-import { agregarClientes } from "../../api/cliente.api"
-import { useEffect } from "react"
-import { Check, Search } from 'lucide-react';
-import { TextareaEquipos } from "../TextareaEquipos"
-import toast from "react-hot-toast"
+import { useState } from "react";
+import { Input } from "../ui/Input";
+import { agregarClientes } from "../../api/cliente.api";
+import { Check } from "lucide-react";
+import { TextareaEquipos } from "../TextareaEquipos";
+import toast from "react-hot-toast";
 
 
 
@@ -108,13 +106,13 @@ export const FormularioCliente = ({ onCrearCliente }) => {
                 </select>
 
                 <TextareaEquipos
-                    className="col-span-2"
-                    label="Observaciones"
-                    type="text"
-                    name="observaciones"
-                    value={cliente.observaciones}
-                    onchange={handleChange}
-                />
+    className="col-span-2"
+    label="Observaciones"
+    type="text"
+    name="observaciones"
+    value={cliente.observaciones}
+    onChange={handleChange}
+/>
 
                 <div>
                     <button type="submit" className="flex m-2 bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">

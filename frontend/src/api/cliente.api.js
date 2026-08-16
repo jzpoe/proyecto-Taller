@@ -1,11 +1,9 @@
-import axios from "axios"
-
-const API = import.meta.env.VITE_API_URL;
+import api from "./axiosConfig";
 
 
 export const obtenerClientes = () => {
 
-    return axios.get(`${API}/clientes`)
+    return api.get(`/clientes`)
 
 }
 
@@ -15,7 +13,7 @@ export const obtenerClientes = () => {
 
 export const agregarClientes = async (cliente) => {
 
-    const response = await axios.post(`${API}/cliente`,
+    const response = await api.post(`/cliente`,
         cliente)
 
     return response
@@ -26,8 +24,8 @@ export const agregarClientes = async (cliente) => {
 
 export const buscarClientePorTelefono = async (telefono) => {
 
-    const respuesta = await axios.get(
-        `${API}/clientes/telefono/${telefono}`
+    const respuesta = await api.get(
+        `/clientes/telefono/${telefono}`
     );
 
     return respuesta.data;

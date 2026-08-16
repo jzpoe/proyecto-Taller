@@ -1,12 +1,10 @@
-import axios from "axios"
-
-const API = import.meta.env.VITE_API_URL;
+import api from "./axiosConfig";
 
 export const inicioSesion= async(datosLogin)=>{
 
     
-    const response = await axios.post(
-        `${API}/login`,
+    const response = await api.post(
+        `/login`,
         datosLogin
     )
     
