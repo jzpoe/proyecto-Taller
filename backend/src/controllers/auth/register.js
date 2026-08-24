@@ -31,7 +31,9 @@ const register = async (req, res) => {
 
             usuario: datosUsuario.usuario,
 
-            contrasena: encryptPassword
+            contrasena: encryptPassword,
+
+            rol: datosUsuario.rol,
 
         };
 

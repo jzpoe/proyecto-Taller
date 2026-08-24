@@ -9,7 +9,8 @@ import { obtenerOrdenPorId } from '../controllers/obtenerOrdenPorId.js';
 import { register } from '../controllers/auth/register.js';
 import { login } from '../controllers/auth/login.js';
 import { actualizarCliente } from '../controllers/actualizarCliente.js';
-import { verificarToken } from '../controllers/middleware/authMiddleware.js';
+import { verificarAdministrador, verificarToken } from '../controllers/middleware/authMiddleware.js';
+import { obtenerUsuarios } from '../controllers/auth/usuarios.controller.js';
 
 const router = express.Router();
 
@@ -42,8 +43,10 @@ router.put("/cliente/:id",actualizarCliente);
 router.put("/equipo/:id", actualizarEquipo)
 router.delete("/ordenServicio/:id",eliminarequipoorden)
 
-router.post("/registrar", register);
+router.post("/registrar",  register);
 router.post("/login", login)
+
+router.get("/usuarios",verificarToken, verificarAdministrador, obtenerUsuarios)
 
 
 export default router;
