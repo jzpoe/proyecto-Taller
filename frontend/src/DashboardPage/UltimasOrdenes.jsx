@@ -1,19 +1,69 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { Pencil, Trash, ClipboardList } from "lucide-react";
 import { BadgeEstado } from "../components/ui/BadgeEstado";
 import { SearchBar } from "../components/ui/SearchBar";
 import { useNavigate } from "react-router-dom";
+import { asignarTecnico } from "../api/usuarios.api";
 
 export const UltimasOrdenes = ({
     ordenes = [],
+    tecnicos = [],
     onEditar,
-    onEliminar
+    onEliminar,
+    onOrdenActualizada
 }) => {
 
 
     const [buscar, setBuscar] = useState("");
-const navigate = useNavigate();
+    const [tecnicosSeleccionados, setTecnicosSeleccionados] = useState({});
+    const navigate = useNavigate();
 
+
+    const handleTecnicoChange = (ordenId, tecnicoId) => {
+
+        setTecnicosSeleccionados((prev) => ({
+            ...prev,
+            [ordenId]: tecnicoId
+        }));
+
+    };
+
+    const handleAsignarTecnico = async (ordenId, tecnicoId) => {
+
+        if (!tecnicoId) {
+            return;
+        }
+
+        try {
+
+            const response = await asignarTecnico(
+                ordenId,
+                tecnicoId
+            );
+
+            toast.success(
+                response.message || "Técnico asignado correctamente."
+            );
+            if (onOrdenActualizada) {
+                onOrdenActualizada();
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Error al asignar técnico:",
+                error
+            );
+
+            toast.error(
+                error.response?.data?.message ||
+                "No se pudo asignar el técnico."
+            );
+
+        }
+
+    };
 
     const formatearFecha = (fecha) => {
 
@@ -84,29 +134,36 @@ const navigate = useNavigate();
             </div>
             <div className="overflow-x-auto">
 
-                <table className="min-w-[1000px] w-full border-collapse">
-
+                <table className="min-w-[1450px] w-full border-collapse">
                     <thead className="bg-gray-100">
 
                         <tr>
 
-                            <th className="px-4 py-3 text-left">Orden</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">Orden</th>
 
-                            <th className="px-4 py-3 text-left">Cliente</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">Cliente</th>
 
-                            <th className="px-4 py-3 text-left">Teléfono</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">Teléfono</th>
 
-                            <th className="px-4 py-3 text-left">Equipo</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">Equipo</th>
 
-                            <th className="px-4 py-3 text-left">Estado</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">Serial</th>
 
-                            <th className="px-4 py-3 text-left">Fecha</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">Daño reportado</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">Estado</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">
+                                Técnico
+                            </th>
 
-                            <th className="px-4 py-3 text-left">Ver</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">Fecha</th>
+
+                            <th className="px-4 py-3 text-left whitespace-nowrap">Ver</th>
 
                             {/* <th className="px-4 py-3 text-left">Eliminar</th> */}
 
                         </tr>
+
+
 
                     </thead>
 
@@ -145,7 +202,30 @@ const navigate = useNavigate();
 
                                         <td className="px-4 py-3">
 
-                                            {orden.marca} {orden.modelo}
+                                            <div className="font-medium">
+                                                {orden.marca} {orden.modelo}
+                                            </div>
+
+                                            <div className="text-sm text-gray-500">
+                                                {orden.tipoEquipo}
+                                            </div>
+
+                                        </td>
+
+                                        <td className="px-4 py-3">
+
+                                            {orden.serial || "Sin serial"}
+
+                                        </td>
+
+                                        <td className="px-4 py-3 max-w-xs">
+
+                                            <p
+                                                className="truncate"
+                                                title={orden.problemaReportado}
+                                            >
+                                                {orden.problemaReportado || "Sin información"}
+                                            </p>
 
                                         </td>
 
@@ -156,6 +236,66 @@ const navigate = useNavigate();
                                                 estado={orden.estado}
 
                                             />
+
+                                        </td>
+
+                                        <td className="px-4 py-3">
+
+                                            <select
+                                                value={
+                                                    tecnicosSeleccionados[orden._id] ||
+                                                    orden.tecnicoAsignado?._id ||
+                                                    ""
+                                                } onChange={(e) =>
+                                                    handleTecnicoChange(
+                                                        orden._id,
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="border border-gray-300 rounded-lg px-3 py-2 bg-white w-48 text-sm"                                            >
+
+                                                <option value="">
+                                                    Seleccionar técnico
+                                                </option>
+
+                                                {tecnicos.map((tecnico) => (
+
+                                                    <option
+                                                        key={tecnico._id}
+                                                        value={tecnico._id}
+                                                    >
+                                                        {tecnico.nombre}
+                                                    </option>
+
+                                                ))}
+
+                                            </select>
+                                            {(
+                                                !orden.tecnicoAsignado ||
+                                                (
+                                                    tecnicosSeleccionados[orden._id] &&
+                                                    tecnicosSeleccionados[orden._id] !== orden.tecnicoAsignado._id
+                                                )
+                                            ) && (
+
+                                                    <button
+                                                        onClick={() =>
+                                                            handleAsignarTecnico(
+                                                                orden._id,
+                                                                tecnicosSeleccionados[orden._id]
+                                                            )
+                                                        }
+                                                        disabled={!tecnicosSeleccionados[orden._id]}
+                                                        className="mt-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-3 py-1.5 rounded-lg text-sm transition"
+                                                    >
+                                                        {
+                                                            orden.tecnicoAsignado
+                                                                ? "Reasignar"
+                                                                : "Asignar"
+                                                        }
+                                                    </button>
+
+                                                )}
 
                                         </td>
 
@@ -212,8 +352,7 @@ const navigate = useNavigate();
 
                                 <tr>
 
-                                    <td colSpan={8}>
-
+                                    <td colSpan={10}>
                                         <div className="flex flex-col items-center justify-center py-16">
 
                                             <ClipboardList

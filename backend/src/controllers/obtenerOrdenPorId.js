@@ -6,15 +6,17 @@ const obtenerOrdenPorId = async (req, res) => {
     try {
         const id = req.params.id
 
-        const ordenServicio = await OrdenServicio.findById(id).populate('cliente')
-
+        const ordenServicio = await OrdenServicio.findById(id)
+            .populate("cliente")
+            .populate("tecnicoAsignado", "nombre usuario rol");
         if (!ordenServicio) {
-            return res.status(404).json({message:"Orden de servicio no encontrada"});
+            return res.status(404).json({ message: "Orden de servicio no encontrada" });
         }
 
         return res.json({
             ok: true,
-            ordenServicio});
+            ordenServicio
+        });
 
 
     } catch (error) {

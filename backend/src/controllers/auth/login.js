@@ -69,7 +69,7 @@ const login = async (req, res) => {
             message: "Inicio de sesión exitoso.",
             token,
             usuario: {
-                
+                id:usuarioRegistrado._id,
                 nombre: usuarioRegistrado.nombre,
                 usuario: usuarioRegistrado.usuario,
                 rol: usuarioRegistrado.rol

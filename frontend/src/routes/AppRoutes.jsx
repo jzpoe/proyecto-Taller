@@ -8,7 +8,24 @@ import { OrdenesDeServicio } from '../pages/equipo/OrdenesDeServicio'
 import { DetalleOrdenServicioPage } from '../pages/detalleOrden/DetalleOrdenServicioPage'
 import { LoginPage } from '../pages/login/LoginPage'
 import { ProtectedRoute } from './ProtectedRoute'
+import { Navigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import { TecnicoDashboard } from '../pages/TecnicoDashboard'
 
+const DashboardPorRol = () => {
+
+    const { usuario } = useAuth();
+
+    if (!usuario) {
+        return <Navigate to="/login" replace />;
+    }
+
+    if (usuario.rol === "Tecnico") {
+        return <TecnicoDashboard />;
+    }
+
+    return <DashboardPage />;
+};
 
 export const AppRoutes = () => {
 
@@ -24,8 +41,7 @@ export const AppRoutes = () => {
 
                 <Route element={<MainLayout />}>
 
-                    <Route path="/" element={<DashboardPage />} />
-
+                    <Route path="/" element={<DashboardPorRol />} />
                     <Route path="/clientes" element={<ClientesPage />} />
 
                     <Route path="/equipos" element={<EquiposPage />} />

@@ -8,6 +8,7 @@ import { Paginacion } from "../../components/ui/Paginacion";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
+import { obtenerMisOrdenes } from "../../api/usuarios.api";
 
 export const OrdenesDeServicio = () => {
 
@@ -15,6 +16,8 @@ export const OrdenesDeServicio = () => {
     const [buscar, setBuscar] = useState("");
     const [paginaActual, setPaginaActual] = useState(1);
     const navigate = useNavigate();
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const esTecnico = usuario?.rol === "Tecnico";
 
     const registrosPorPagina = 10;
 
@@ -22,9 +25,19 @@ export const OrdenesDeServicio = () => {
 
         try {
 
-            const response = await obtenerOrdenes();
+            if (esTecnico) {
 
-            setOrdenes(response.data);
+                const response = await obtenerMisOrdenes();
+
+                setOrdenes(response.ordenes);
+
+            } else {
+
+                const response = await obtenerOrdenes();
+
+                setOrdenes(response.data);
+
+            }
 
         } catch (error) {
 
@@ -188,8 +201,15 @@ export const OrdenesDeServicio = () => {
 
                             {/* <th className="px-4 py-3 text-center">Editar</th> */}
 
-                            <th className="px-4 py-3 text-center">Eliminar</th>
-                            <th className="px-4 py-3 text-center">Descargar PDF</th>
+                            {!esTecnico && (
+                                <th className="px-4 py-3 text-center">
+                                    Eliminar
+                                </th>
+                            )}
+
+                            <th className="px-4 py-3 text-center">
+                                Descargar PDF
+                            </th>
 
                         </tr>
 
@@ -277,35 +297,29 @@ export const OrdenesDeServicio = () => {
 
                                         </td> */}
 
-                                        <td className="text-center">
+                                        {!esTecnico && (
+                                            <td className="text-center">
 
+                                                <button
+                                                    onClick={() => handleEliminar(orden._id)}
+                                                    className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg shadow transition"
+                                                >
+                                                    <Trash size={20} />
+                                                </button>
+
+                                            </td>
+                                        )}
+                                        <td className="text-center">
                                             <button
                                                 onClick={() => {
-                                                    console.log("ID:", orden._id);
-                                                    handleEliminar(orden._id);
+                                                    console.log(orden);
+                                                    generarOrdenPDF(orden);
                                                 }}
-                                                className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg shadow transition"
+                                                className="bg-blue-600 hover:bg-red-700 text-white px-3 py-1 rounded"
                                             >
-
-                                                <Trash size={20} />
-
+                                                PDF
                                             </button>
-
-                                            
-
-
                                         </td>
-                                        <td className="text-center">
-                                                <button
-                                                    onClick={() => {
-                                                        console.log(orden);
-                                                        generarOrdenPDF(orden);
-                                                    }}
-                                                    className="bg-blue-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-                                                >
-                                                    PDF
-                                                </button>
-                                            </td>
 
                                     </tr>
 

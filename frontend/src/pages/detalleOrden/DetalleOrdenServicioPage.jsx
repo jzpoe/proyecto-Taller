@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 import { useParams } from "react-router-dom";
 import { actualizarCliente, actualizarOrdenServicio, obtenerOrdenPorId } from "../../api/ordenServicio.api";
 import { EstadoCard } from "../../components/detalleOrden/EstadoCard";
@@ -14,9 +15,24 @@ import { generarOrdenServicioPDF } from "../../utils/generarOrdenServicioPDF";
 
 export const DetalleOrdenServicioPage = () => {
 
+
+
     const { id } = useParams();
+    const { usuario } = useAuth();
+
+    const esAdministrador = usuario?.rol === "Administrador";
+    const esTecnico = usuario?.rol === "Tecnico";
 
     const [orden, setOrden] = useState(null);
+
+    const puedeEditar =
+        esAdministrador ||
+        (
+            esTecnico &&
+            orden?.tecnicoAsignado?._id === usuario?.id
+        );
+
+    
 
     const handleGuardar = async () => {
 
@@ -57,7 +73,7 @@ export const DetalleOrdenServicioPage = () => {
             const orden = await obtenerOrdenPorId(id);
 
             setOrden(orden.ordenServicio);
-            
+
 
         } catch (error) {
 
@@ -93,31 +109,31 @@ export const DetalleOrdenServicioPage = () => {
 
     };
 
-    
+
 
     const handleClienteChange = (e) => {
 
-     const { name, value } = e.target;
+        const { name, value } = e.target;
 
-     setOrden((prev) => ({
+        setOrden((prev) => ({
 
-        ...prev,
+            ...prev,
 
-        cliente: {
+            cliente: {
 
-            ...prev.cliente,
+                ...prev.cliente,
 
-            [name]: value
+                [name]: value
 
-        }
+            }
 
-    }));
+        }));
 
-    
 
-   
 
-};
+
+
+    };
 
     return (
 
@@ -145,10 +161,10 @@ export const DetalleOrdenServicioPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <ClienteCard cliente={orden.cliente}
-                handleChange={handleClienteChange}
-                 />
+                    handleChange={handleClienteChange}
+                />
                 <EquipoDetalles orden={orden}
-                handleChange={handleChange}
+                    handleChange={handleChange}
                 />
 
 

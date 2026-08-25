@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import { FormularioOrdenServicio } from "../pages/FormularioOrdenServicio";
 import { crearOrdenServicio, eliminarEquipoOrdenServicio, obtenerOrdenes } from "../api/ordenServicio.api";
 import { obtenerClientes } from "../api/cliente.api";
+import { obtenerTecnicos } from "../api/usuarios.api";
 
 
 
@@ -24,6 +25,7 @@ export const DashboardPage = () => {
     const [modalAbierto, setModalAbierto] = useState(null)
     const [editandoEquipo, setEditandoEquipo] = useState(null)
     const [ordenes, setOrdenes] = useState([]);
+    const [tecnicos, setTecnicos] = useState([]);
 
 
 
@@ -117,7 +119,7 @@ export const DashboardPage = () => {
                 cancelButtonText: "Cancelar"
             })
             if (resultado.isConfirmed) {
-                
+
                 await eliminarEquipoOrdenServicio(equipos_id)
                 cargarOrdenes()
                 toast.success('El equipo se ha eliminado correctamente.');
@@ -147,7 +149,27 @@ export const DashboardPage = () => {
 
     }, [])
 
+    useEffect(() => {
 
+        const cargarTecnicos = async () => {
+
+            try {
+
+                const response = await obtenerTecnicos();
+
+                setTecnicos(response.tecnicos);
+
+            } catch (error) {
+
+                console.error("Error al cargar técnicos:", error);
+
+            }
+
+        };
+
+        cargarTecnicos();
+
+    }, []);
 
     return (
 
@@ -188,10 +210,6 @@ export const DashboardPage = () => {
                     titulo="Clientes Inactivos"
                     valor={clientesInactivos}
                 />
-
-
-
-
 
             </div>
             <div className="flex flex-col sm:flex-row gap-4 mt-6 mb-6">
@@ -278,6 +296,8 @@ export const DashboardPage = () => {
                 onEditar={editarEquipo}
                 onEliminar={handleEliminar}
                 ordenes={ordenes}
+                tecnicos={tecnicos}
+                onOrdenActualizada={cargarOrdenes}
 
             />
 

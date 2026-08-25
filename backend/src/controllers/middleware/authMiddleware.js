@@ -60,6 +60,8 @@ export const verificarToken = (req, res, next) => {
 
 export const verificarAdministrador =(req,res,next)=>{
 
+ 
+
     if(req.usuario?.rol !="Administrador"){
         return res.status(403).json({
             ok: false,

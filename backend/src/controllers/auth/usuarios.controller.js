@@ -1,28 +1,32 @@
-import Usuarios from "../../models/usuario.model.js "
+import Usuario from "../../models/usuario.model.js "
 
 
 
-export const obtenerUsuarios = async (req, res)=>{
+export const obtenerTecnicos = async (req, res) => {
 
     try {
 
-        const usuarios = await Usuarios.find()
-        .select("-contrasena")
-        .sort({ createdAt: -1 });
+        const tecnicos = await Usuario.find({
+            rol: "Tecnico",
+            activo: true
+        })
+        .select("_id nombre usuario rol")
+        .sort({ nombre: 1 });
 
         return res.status(200).json({
             ok: true,
-            usuarios
-        })
-
+            tecnicos
+        });
 
     } catch (error) {
-        console.error("Error al obtener usuarios:", error);
+
+        console.error("Error al obtener técnicos:", error);
 
         return res.status(500).json({
             ok: false,
-            message: "Error al obtener los usuarios."
+            message: "Error al obtener los técnicos."
         });
+
     }
 
-}
+};

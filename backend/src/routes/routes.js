@@ -10,9 +10,14 @@ import { register } from '../controllers/auth/register.js';
 import { login } from '../controllers/auth/login.js';
 import { actualizarCliente } from '../controllers/actualizarCliente.js';
 import { verificarAdministrador, verificarToken } from '../controllers/middleware/authMiddleware.js';
-import { obtenerUsuarios } from '../controllers/auth/usuarios.controller.js';
+import { obtenerTecnicos } from '../controllers/auth/usuarios.controller.js';
+import { asignarTecnico } from '../controllers/asignarTenico.js';
+import { obtenerMisOrdenes } from '../controllers/obtenerOrdenes.js';
 
 const router = express.Router();
+
+
+router.get("/ordenServicio/mis-ordenes", verificarToken,obtenerMisOrdenes);
 
 
 router.get('/equipos', verificarToken, getEquipos)
@@ -24,7 +29,7 @@ router.delete('/equipo/:id', eliminarEquipo)
 router.post('/equipo/:id/asignar', asignacionEquipo)
 
 //URL para CREAR CLIENTES
-router.post('/cliente',verificarToken, crearCliente)
+router.post('/cliente', verificarToken, crearCliente)
 router.get('/clientes', obtenerClientes)
 
 //orden de servicio
@@ -37,16 +42,19 @@ router.post(
     crearOrdenServicio
 );
 router.get("/ordenServicio", verificarToken, obtenerOrdenes)
-router.get("/ordenServicio/:id",verificarToken,  obtenerOrdenPorId )
-router.put("/ordenServicio/:id",verificarToken, actualizarOrdenServicio);
-router.put("/cliente/:id",actualizarCliente);
+router.get("/ordenServicio/:id", verificarToken, obtenerOrdenPorId)
+router.put("/cliente/:id", actualizarCliente);
 router.put("/equipo/:id", actualizarEquipo)
-router.delete("/ordenServicio/:id",eliminarequipoorden)
+router.delete("/ordenServicio/:id", verificarToken,verificarAdministrador, eliminarequipoorden)
 
-router.post("/registrar",  register);
+router.post("/registrar", register);
 router.post("/login", login)
 
-router.get("/usuarios",verificarToken, verificarAdministrador, obtenerUsuarios)
+router.get("/usuarios/tecnicos", verificarToken, verificarAdministrador, obtenerTecnicos)
+
+router.put("/ordenServicio/:id/asignar-tecnico", verificarToken, asignarTecnico);
+
+router.put("/ordenServicio/:id", verificarToken, actualizarOrdenServicio);
 
 
 export default router;

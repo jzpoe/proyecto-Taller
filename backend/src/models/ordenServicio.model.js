@@ -13,6 +13,12 @@ const ordenServicioSchema = new mongoose.Schema(
       ref: "Cliente",
       required: true,
     },
+    
+    tecnicoAsignado: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Usuario",
+      default: null,
+    },
 
     estado: {
       type: String,

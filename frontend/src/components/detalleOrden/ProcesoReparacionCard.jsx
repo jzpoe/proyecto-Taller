@@ -11,14 +11,14 @@ export const ProcesoReparacionCard = ({ orden, handleChange, onGuardar }) => {
                 label="Diagnóstico"
                 name="diagnostico"
                 value={orden.diagnostico}
-                onchange={handleChange}
+                onChange={handleChange}
             />
 
             <TextareaEquipos
                 label="Solución"
                 name="solucion"
                 value={orden.solucion}
-                onchange={handleChange}
+                onChange={handleChange}
             />
 
             <Input
@@ -71,7 +71,7 @@ export const ProcesoReparacionCard = ({ orden, handleChange, onGuardar }) => {
                 label="Observaciones de entrega"
                 name="observacionesEntrega"
                 value={orden.observacionesEntrega}
-                onchange={handleChange}
+                onChange={handleChange}
             />
             <div className="flex justify-end mt-6">
 
