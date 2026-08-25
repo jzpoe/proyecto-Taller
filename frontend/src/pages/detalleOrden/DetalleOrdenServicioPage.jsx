@@ -32,7 +32,7 @@ export const DetalleOrdenServicioPage = () => {
             orden?.tecnicoAsignado?._id === usuario?.id
         );
 
-    
+
 
     const handleGuardar = async () => {
 
@@ -149,12 +149,14 @@ export const DetalleOrdenServicioPage = () => {
                     💾 Guardar Cambios
                 </button>
 
-                <button
-                    onClick={() => generarOrdenServicioPDF(orden)}
-                    className="bg-green-700 hover:bg-green-800 text-white px-5 py-2 rounded-lg shadow"
-                >
-                    🖨️ Imprimir PDF
-                </button>
+                {!esTecnico && (
+                    <button
+                        onClick={() => generarOrdenServicioPDF(orden)}
+                        className="bg-green-700 hover:bg-green-800 text-white px-5 py-2 rounded-lg shadow"
+                    >
+                        🖨️ Imprimir PDF
+                    </button>
+                )}
 
             </div>
 

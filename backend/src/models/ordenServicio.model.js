@@ -13,7 +13,7 @@ const ordenServicioSchema = new mongoose.Schema(
       ref: "Cliente",
       required: true,
     },
-    
+
     tecnicoAsignado: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Usuario",
@@ -25,6 +25,8 @@ const ordenServicioSchema = new mongoose.Schema(
       enum: [
         "Recibido",
         "En diagnóstico",
+        "Esperando aprobación",
+        "Reparando",
         "Listo para entregar",
         "Entregado",
       ],

@@ -77,6 +77,42 @@ export const OrdenesDeServicio = () => {
 
     }
 
+    const cambiarEstado = async (orden, nuevoEstado) => {
+
+        try {
+
+            const response = await actualizarOrdenServicio(
+                orden._id,
+                {
+                    estado: nuevoEstado
+                }
+            );
+
+            setOrdenes((ordenesActuales) =>
+                ordenesActuales.map((ordenActual) =>
+                    ordenActual._id === orden._id
+                        ? {
+                            ...ordenActual,
+                            ...response.orden
+                        }
+                        : ordenActual
+                )
+            );
+
+            toast.success("Estado actualizado correctamente.");
+
+        } catch (error) {
+
+            console.error("Error al cambiar el estado:", error);
+
+            toast.error(
+                error.response?.data?.mensaje ||
+                "No se pudo actualizar el estado."
+            );
+
+        }
+    };
+
 
 
 
@@ -109,8 +145,6 @@ export const OrdenesDeServicio = () => {
 
     const ordenesFiltradas = ordenes.filter((orden) => {
 
-
-
         const texto = buscar.toLowerCase();
 
         return (
@@ -125,11 +159,18 @@ export const OrdenesDeServicio = () => {
 
             orden.modelo?.toLowerCase().includes(texto) ||
 
-            orden.estado?.toLowerCase().includes(texto)
+            orden.serial?.toLowerCase().includes(texto) ||
+
+            orden.problemaReportado?.toLowerCase().includes(texto) ||
+
+            orden.estado?.toLowerCase().includes(texto) ||
+
+            orden.tecnicoAsignado?.nombre?.toLowerCase().includes(texto)
 
         );
 
     });
+
 
     const indiceFinal = paginaActual * registrosPorPagina;
 
@@ -179,8 +220,7 @@ export const OrdenesDeServicio = () => {
             <div className="overflow-x-auto">
 
 
-                <table className="w-full min-w-[900px] border-collapse">
-
+                <table className="w-full min-w-[1500px] border-collapse">
                     <thead className="bg-gray-100">
 
                         <tr>
@@ -193,13 +233,17 @@ export const OrdenesDeServicio = () => {
 
                             <th className="px-4 py-3 text-left">Equipo</th>
 
+                            <th className="px-4 py-3 text-left">Serial</th>
+
+                            <th className="px-4 py-3 text-left">Daño reportado</th>
+
                             <th className="px-4 py-3 text-left">Estado</th>
+
+                            <th className="px-4 py-3 text-left">Técnico</th>
 
                             <th className="px-4 py-3 text-left">Fecha</th>
 
-                            <th className="px-4 py-3 text-center"> Ver </th>
-
-                            {/* <th className="px-4 py-3 text-center">Editar</th> */}
+                            <th className="px-4 py-3 text-center">Ver</th>
 
                             {!esTecnico && (
                                 <th className="px-4 py-3 text-center">
@@ -207,9 +251,11 @@ export const OrdenesDeServicio = () => {
                                 </th>
                             )}
 
-                            <th className="px-4 py-3 text-center">
-                                Descargar PDF
-                            </th>
+                            {!esTecnico && (
+                                <th className="px-4 py-3 text-center">
+                                    Descargar PDF
+                                </th>
+                            )}
 
                         </tr>
 
@@ -258,15 +304,70 @@ export const OrdenesDeServicio = () => {
                                         </td>
 
                                         <td className="px-4 py-3">
-
-                                            <BadgeEstado
-
-                                                estado={orden.estado}
-
-                                            />
-
+                                            {orden.serial || "Sin serial"}
                                         </td>
 
+                                        <td className="px-4 py-3">
+                                            {orden.problemaReportado || "Sin información"}
+                                        </td>
+
+                                        <td className="px-4 py-3">
+
+                                            <td className="px-4 py-3">
+
+                                                {esTecnico ? (
+
+                                                    <select
+                                                        value={orden.estado}
+                                                        onChange={(e) =>
+                                                            cambiarEstado(
+                                                                orden,
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white"
+                                                    >
+
+                                                        <option value="Recibido">
+                                                            Recibido
+                                                        </option>
+
+                                                        <option value="En diagnóstico">
+                                                            En diagnóstico
+                                                        </option>
+
+                                                        <option value="Esperando aprobación">
+                                                            Esperando aprobación
+                                                        </option>
+
+                                                        <option value="Reparando">
+                                                            Reparando
+                                                        </option>
+
+                                                        <option value="Listo para entregar">
+                                                            Listo para entregar
+                                                        </option>
+
+                                                        <option value="Entregado">
+                                                            Entregado
+                                                        </option>
+
+                                                    </select>
+
+                                                ) : (
+
+                                                    <BadgeEstado
+                                                        estado={orden.estado}
+                                                    />
+
+                                                )}
+
+                                            </td>
+
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            {orden.tecnicoAsignado?.nombre || "Sin asignar"}
+                                        </td>
                                         <td className="px-4 py-3">
 
                                             {formatearFecha(orden.createdAt)}
@@ -309,17 +410,14 @@ export const OrdenesDeServicio = () => {
 
                                             </td>
                                         )}
-                                        <td className="text-center">
+                                        {!esTecnico && (
                                             <button
-                                                onClick={() => {
-                                                    console.log(orden);
-                                                    generarOrdenPDF(orden);
-                                                }}
-                                                className="bg-blue-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                                                onClick={() => generarOrdenServicioPDF(orden)}
+                                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
                                             >
                                                 PDF
                                             </button>
-                                        </td>
+                                        )}
 
                                     </tr>
 
@@ -329,8 +427,7 @@ export const OrdenesDeServicio = () => {
 
                                 <tr>
 
-                                    <td colSpan={8}>
-
+                                    <td colSpan={esTecnico ? 11 : 12}>
                                         <div className="flex flex-col items-center justify-center py-16">
 
                                             <ClipboardList

@@ -344,10 +344,42 @@ const actualizarOrdenServicio = async (req, res) => {
 
         }
 
+        // Datos que sí se pueden actualizar
+        const datosActualizacion = {
+            ...req.body
+        };
+
+        // Las fechas las controla exclusivamente el backend
+        delete datosActualizacion.fechaDiagnostico;
+        delete datosActualizacion.fechaEntrega;
+
+
+        // Fecha en que comienza el diagnóstico
+        if (
+            datosActualizacion.estado === "En diagnóstico" &&
+            !orden.fechaDiagnostico
+        ) {
+
+            datosActualizacion.fechaDiagnostico = new Date();
+
+        }
+
+
+        // Fecha en que se entrega la orden
+        if (
+            datosActualizacion.estado === "Entregado" &&
+            !orden.fechaEntrega
+        ) {
+
+            datosActualizacion.fechaEntrega = new Date();
+
+        }
+
+
         const ordenActualizada =
             await OrdenServicio.findByIdAndUpdate(
                 id,
-                req.body,
+                datosActualizacion,
                 {
                     new: true
                 }
@@ -357,6 +389,7 @@ const actualizarOrdenServicio = async (req, res) => {
                 "tecnicoAsignado",
                 "nombre usuario rol"
             );
+
 
         return res.json({
 
@@ -425,6 +458,35 @@ export const editarOrdenes = async (req, res) => {
         //     })
         // }
         //actualizar documento 
+
+        const datosActualizacion = {
+            ...req.body
+        };
+
+        // Las fechas las controla el backend
+        delete datosActualizacion.fechaDiagnostico;
+        delete datosActualizacion.fechaEntrega;
+
+
+        // Si pasa a "En diagnóstico"
+        // y todavía no tiene fecha de diagnóstico
+        if (
+            datosActualizacion.estado === "En diagnóstico" &&
+            !orden.fechaDiagnostico
+        ) {
+            datosActualizacion.fechaDiagnostico = new Date();
+        }
+
+
+        // Si pasa a "Entregado"
+        // y todavía no tiene fecha de entrega
+        if (
+            datosActualizacion.estado === "Entregado" &&
+            !orden.fechaEntrega
+        ) {
+            datosActualizacion.fechaEntrega = new Date();
+        }
+
         const equipoActualizado = await Equipo.findByIdAndUpdate(
             idParaActualizar,
             bodyParaActualizar,

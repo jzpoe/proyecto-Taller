@@ -1,13 +1,27 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
-export const ProtectedRoute = () => {
+export const ProtectedRoute = ({ rolRequerido }) => {
 
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
 
-    if(!token){
+    const { usuario } = useAuth();
+
+    if (!token) {
+
         return <Navigate to="/login" replace />;
-    }
-    return <Outlet />;
 
+    }
+
+    if (
+        rolRequerido &&
+        usuario?.rol !== rolRequerido
+    ) {
+
+        return <Navigate to="/" replace />;
+
+    }
+
+    return <Outlet />;
 
 };

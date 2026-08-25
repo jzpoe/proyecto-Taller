@@ -68,6 +68,37 @@ export const EstadoCard = ({ orden }) => {
 
                 <div>
 
+    <p className="text-gray-500 text-sm">
+        Fecha de diagnóstico
+    </p>
+
+    <p className="font-semibold">
+        {orden.fechaDiagnostico
+            ? formatearFecha(orden.fechaDiagnostico)
+            : "Pendiente"
+        }
+    </p>
+
+</div>
+
+<div>
+
+    <p className="text-gray-500 text-sm">
+        Fecha de entrega
+    </p>
+
+    <p className="font-semibold">
+        {orden.fechaEntrega
+            ? formatearFecha(orden.fechaEntrega)
+            : "Pendiente"
+        }
+    </p>
+
+</div>
+
+
+                <div>
+
                     <p className="text-gray-500 text-sm">
                         Última actualización
                     </p>

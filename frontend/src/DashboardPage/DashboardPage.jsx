@@ -58,28 +58,26 @@ export const DashboardPage = () => {
 
 
 
-    const totalEquipos = equipos.length
-    const totalEquipos1 = equipos.slice(0, 5)
+   const totalEquipos = equipos.length;
 
-    const disponibles = equipos.filter((equipo) => {
-        return equipo.estado === "Disponible"
-    }).length
+const totalOrdenes = ordenes.length;
 
-    const reparacion1 = equipos.filter((reparacion) => {
-        return reparacion.estado === "En Reparacion" || reparacion.estado === "REPARACION"
-    }).length
+const equiposEnReparacion = equipos.filter((equipo) => {
+    return (
+        equipo.estado === "En Reparacion" ||
+        equipo.estado === "REPARACION"
+    );
+}).length;
 
-    const asignacion = equipos.filter((asignado) => {
-        return asignado.estado === "Asignado"
-    }).length
+const clientesActivos = new Set(
+    clientes
+        .filter((cliente) => cliente.estado === "activo")
+        .map((cliente) => cliente.telefono)
+).size;
 
-    const clientesActivos = clientes.filter((disponible) => {
-        return disponible.estado === "activo"
-    }).length
-    const clientesInactivos = clientes.filter((inactivo) => {
-        return inactivo.estado === "inactivo"
-    }).length
-    const cantidadClientes = clientes.length
+const ordenesListas = ordenes.filter((orden) => {
+    return orden.estado === "Listo para entregar";
+}).length;
 
     const abrirModal = (modal) => {
         setModalAbierto(modal)
@@ -176,42 +174,34 @@ export const DashboardPage = () => {
         <>
 
             <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
+
                 <CardDashboard
                     titulo="Total de Equipos"
                     valor={totalEquipos}
-
-
                 />
-                <CardDashboard
-                    titulo="Equipos Disponibles"
-                    valor={disponibles}
 
-                />
                 <CardDashboard
-                    titulo="Equipos asignados"
-                    valor={asignacion}
-
+                    titulo="Total de Órdenes"
+                    valor={totalOrdenes}
                 />
 
                 <CardDashboard
                     titulo="Equipos en Reparación"
-                    valor={reparacion1}
+                    valor={equiposEnReparacion}
+                />
 
-                />
-                <CardDasboardClientes
-                    titulo="Clientes disponibles"
-                    valor={clientesActivos}
-                />
                 <CardDasboardClientes
                     titulo="Clientes Activos"
                     valor={clientesActivos}
                 />
-                <CardDasboardClientes
-                    titulo="Clientes Inactivos"
-                    valor={clientesInactivos}
+
+                <CardDashboard
+                    titulo="Listas para Entregar"
+                    valor={ordenesListas}
                 />
 
             </div>
+
             <div className="flex flex-col sm:flex-row gap-4 mt-6 mb-6">
                 {/* <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition-all duration-200 hover:scale-105"
 

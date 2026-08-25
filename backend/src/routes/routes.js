@@ -13,6 +13,7 @@ import { verificarAdministrador, verificarToken } from '../controllers/middlewar
 import { obtenerTecnicos } from '../controllers/auth/usuarios.controller.js';
 import { asignarTecnico } from '../controllers/asignarTenico.js';
 import { obtenerMisOrdenes } from '../controllers/obtenerOrdenes.js';
+import { crearTecnico } from '../controllers/auth/crearTecnico.js';
 
 const router = express.Router();
 
@@ -47,10 +48,12 @@ router.put("/cliente/:id", actualizarCliente);
 router.put("/equipo/:id", actualizarEquipo)
 router.delete("/ordenServicio/:id", verificarToken,verificarAdministrador, eliminarequipoorden)
 
+
 router.post("/registrar", register);
 router.post("/login", login)
 
 router.get("/usuarios/tecnicos", verificarToken, verificarAdministrador, obtenerTecnicos)
+router.post( "/usuarios/tecnicos", verificarToken, verificarAdministrador, crearTecnico);
 
 router.put("/ordenServicio/:id/asignar-tecnico", verificarToken, asignarTecnico);
 

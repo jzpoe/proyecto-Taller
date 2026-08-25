@@ -11,6 +11,7 @@ import { ProtectedRoute } from './ProtectedRoute'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { TecnicoDashboard } from '../pages/TecnicoDashboard'
+import { TecnicosPage } from '../pages/usuarios/TecnicosPage'
 
 const DashboardPorRol = () => {
 
@@ -41,22 +42,32 @@ export const AppRoutes = () => {
 
                 <Route element={<MainLayout />}>
 
-                    <Route path="/" element={<DashboardPorRol />} />
+                    <Route path="/" element={<DashboardPage />} />
+
                     <Route path="/clientes" element={<ClientesPage />} />
 
                     <Route path="/equipos" element={<EquiposPage />} />
 
-                    <Route path="/clientes/nuevo" element={<CrearClientePage />} />
-
                     <Route path="/ordenes" element={<OrdenesDeServicio />} />
 
                     <Route
-                        path="/ordenServicio/:id"
-                        element={<DetalleOrdenServicioPage />}
+                        path="/tecnicos"
+                        element={<TecnicosPage />}
                     />
 
                 </Route>
+                <Route element={<ProtectedRoute rolRequerido="Administrador" />}>
 
+                    <Route element={<MainLayout />}>
+
+                        <Route
+                            path="/tecnicos"
+                            element={<TecnicosPage />}
+                        />
+
+                    </Route>
+
+                </Route>
             </Route>
 
         </Routes>

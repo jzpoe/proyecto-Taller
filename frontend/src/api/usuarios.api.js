@@ -42,3 +42,15 @@ export const obtenerMisOrdenes = async () => {
     return response.data;
 
 };
+
+export const crearTecnico = async (datos) => {
+
+    const response = await api.post(
+        "/usuarios/tecnicos",
+        datos
+    );
+
+    return response.data;
+
+};
+

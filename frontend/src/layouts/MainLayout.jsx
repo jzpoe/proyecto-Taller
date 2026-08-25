@@ -78,6 +78,12 @@ export const MainLayout = () => {
                             Órdenes de Servicio
                         </NavLink>
 
+                        {usuario?.rol === "Administrador" && (
+                            <NavLink to="/tecnicos" className={linkClass}>
+                                Técnicos
+                            </NavLink>
+                        )}
+
                     </nav>
 
                 </div>
@@ -115,6 +121,16 @@ export const MainLayout = () => {
                             >
                                 Órdenes de Servicio
                             </NavLink>
+
+                            {usuario?.rol === "Administrador" && (
+                                <NavLink
+                                    to="/tecnicos"
+                                    className={linkClass}
+                                    onClick={() => setMenuAbierto(false)}
+                                >
+                                    Técnicos
+                                </NavLink>
+                            )}
 
                         </nav>
 
