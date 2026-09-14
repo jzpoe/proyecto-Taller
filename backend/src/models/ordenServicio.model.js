@@ -9,9 +9,9 @@ const ordenServicioSchema = new mongoose.Schema(
 
 
     cliente: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Cliente",
-      required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cliente",
+        required: true,
     },
 
     tecnicoAsignado: {

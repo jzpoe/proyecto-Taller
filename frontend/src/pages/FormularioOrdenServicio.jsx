@@ -182,7 +182,7 @@ export const FormularioOrdenServicio = ({ onCrearOrden }) => {
                     label="Problema Reportado"
                     name="problemaReportado"
                     value={orden.problemaReportado}
-                    onchange={handleChange}
+                    onChange={handleChange}
                 />
 
                 <TextareaEquipos
@@ -190,7 +190,7 @@ export const FormularioOrdenServicio = ({ onCrearOrden }) => {
                     label="Accesorios"
                     name="accesorios"
                     value={orden.accesorios}
-                    onchange={handleChange}
+                    onChange={handleChange}
                 />
 
                 <TextareaEquipos
@@ -198,7 +198,7 @@ export const FormularioOrdenServicio = ({ onCrearOrden }) => {
                     label="Observaciones de Recepción"
                     name="observacionesRecepcion"
                     value={orden.observacionesRecepcion}
-                    onchange={handleChange}
+                    onChange={handleChange}
                 />
 
 

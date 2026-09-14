@@ -70,19 +70,30 @@ export const MainLayout = () => {
                             Dashboard
                         </NavLink>
 
-                        <NavLink to="/equipos" className={linkClass}>
-                            Equipos
-                        </NavLink>
+
 
                         <NavLink to="/ordenes" className={linkClass}>
                             Órdenes de Servicio
                         </NavLink>
 
+
+
                         {usuario?.rol === "Administrador" && (
-                            <NavLink to="/tecnicos" className={linkClass}>
-                                Técnicos
-                            </NavLink>
+                            <>
+                                <NavLink to="/ventas" className={linkClass}>
+                                    Ventas
+                                </NavLink>
+                                <NavLink to="/equipos" className={linkClass}>
+                                    Equipos
+                                </NavLink>
+                                <NavLink to="/tecnicos" className={linkClass}>
+                                    Técnicos
+                                </NavLink>
+                            </>
                         )}
+
+
+
 
                     </nav>
 
@@ -124,6 +135,16 @@ export const MainLayout = () => {
 
                             {usuario?.rol === "Administrador" && (
                                 <NavLink
+                                    to="/ventas"
+                                    className={linkClass}
+                                    onClick={() => setMenuAbierto(false)}
+                                >
+                                    Ventas
+                                </NavLink>
+                            )}
+
+                            {usuario?.rol === "Administrador" && (
+                                <NavLink
                                     to="/tecnicos"
                                     className={linkClass}
                                     onClick={() => setMenuAbierto(false)}
@@ -131,6 +152,8 @@ export const MainLayout = () => {
                                     Técnicos
                                 </NavLink>
                             )}
+
+
 
                         </nav>
 

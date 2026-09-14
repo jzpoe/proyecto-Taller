@@ -11,6 +11,7 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { TecnicoDashboard } from '../pages/TecnicoDashboard'
 import { TecnicosPage } from '../pages/usuarios/TecnicosPage'
+import { VentasPage } from '../pages/ventas/VentasPage'
 
 
 const DashboardPorRol = () => {
@@ -92,6 +93,8 @@ export const AppRoutes = () => {
                     />
 
 
+
+
                 </Route>
 
             </Route>
@@ -117,6 +120,11 @@ export const AppRoutes = () => {
                     />
 
                 </Route>
+
+                <Route
+                    path="/ventas"
+                    element={<VentasPage />}
+                />
 
             </Route>
 

@@ -161,7 +161,7 @@ export const FormularioEquipos = ({ onEquipoCreado, equipoEditar }) => {
                     placeholder="observaciones"
                     name="observaciones"
                     value={equipos.observaciones}
-                    onchange={handleOnchange}
+                    onChange={handleOnchange}
                 />
 
                 <input
@@ -171,7 +171,7 @@ export const FormularioEquipos = ({ onEquipoCreado, equipoEditar }) => {
                 />
 
                 <div className="col-span-2">
-                    <button type="submit" type="submit" className="col-span-2 flex justify-end  m-2
+                    <button type="submit" className="col-span-2 flex justify-end  m-2
                      bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 max-w-4xl"
                     >Agregar  <Check strokeWidth={3} />
                     </button>
