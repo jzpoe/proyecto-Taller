@@ -21,7 +21,7 @@ export const AsignarEquipoPage = () => {
         try {
             const response = await obtenerEquipos()
             setEquipo(response.data)
-            console.log(response.data)
+            
 
         } catch (error) {
             console.error("error al cargar los equipos")

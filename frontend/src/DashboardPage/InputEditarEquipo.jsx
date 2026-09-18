@@ -36,7 +36,6 @@ export const InputEditarEquipo = ({ equipoEditar, onEquipoActualizado, cerrarMod
             setEquipo(equipoEditar)
 
         }
-        console.log("lleggo desde equipoEditar ", equipoEditar)
     }, [equipoEditar])
 
     const handleSubmit = async (e) => {

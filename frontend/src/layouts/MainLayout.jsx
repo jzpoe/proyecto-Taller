@@ -80,9 +80,9 @@ export const MainLayout = () => {
 
                         {usuario?.rol === "Administrador" && (
                             <>
-                                <NavLink to="/ventas" className={linkClass}>
+                                {/* <NavLink to="/ventas" className={linkClass}>
                                     Ventas
-                                </NavLink>
+                                </NavLink> */}
                                 <NavLink to="/equipos" className={linkClass}>
                                     Equipos
                                 </NavLink>
@@ -133,7 +133,7 @@ export const MainLayout = () => {
                                 Órdenes de Servicio
                             </NavLink>
 
-                            {usuario?.rol === "Administrador" && (
+                            {/* {usuario?.rol === "Administrador" && (
                                 <NavLink
                                     to="/ventas"
                                     className={linkClass}
@@ -141,7 +141,7 @@ export const MainLayout = () => {
                                 >
                                     Ventas
                                 </NavLink>
-                            )}
+                            )} */}
 
                             {usuario?.rol === "Administrador" && (
                                 <NavLink

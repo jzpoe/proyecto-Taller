@@ -24,7 +24,7 @@ export const CrearClientePage = () => {
     const handleSubmit = (e) => {
 
         e.preventDefault()
-        console.log(cliente)
+        
 
         agregarClientes(cliente)
 

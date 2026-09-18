@@ -17,7 +17,7 @@ export const ClientesPage = () => {
     const totalDePaginas = Math.ceil(
         clientes.length / clientesPorPaginas
     )
-    console.log("pagina actual", paginaActual)
+    
     const siguiente = () => {
         if (paginaActual < totalDePaginas) {
             setPaginaActual(paginaActual + 1)
@@ -36,7 +36,7 @@ export const ClientesPage = () => {
         try {
             const response = await obtenerClientes()
 
-            console.log("Respuesta API:", response.data)
+         
             setClientes(response.data)
 
         } catch (error) {

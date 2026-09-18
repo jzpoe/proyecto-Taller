@@ -30,8 +30,8 @@ export const LoginPage = () => {
             const response = await inicioSesion(login)
 
             iniciarSesionContext(response);
-            console.log(response)
-            console.log(response.Usuario)
+            
+            
 
             toast.success('Bienvenido');
             navigate("/");

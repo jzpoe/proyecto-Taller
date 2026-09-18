@@ -10,7 +10,7 @@ export const Modal = ({ isOpen, onClose, title, children, size = "md" }) => {
         lg: "max-w-4xl",
         xl: "max-w-6xl"
     }
-    console.log(size);
+    
     return (
 
         <div onClick={onClose} className="fixed inset-0 flex justify-center items-center bg-black/50 ">

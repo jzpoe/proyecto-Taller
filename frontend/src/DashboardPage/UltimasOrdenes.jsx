@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import toast from "react-hot-toast";
-import { Pencil, Trash, ClipboardList } from "lucide-react";
+import { Pencil, ClipboardList } from "lucide-react";
 import { BadgeEstado } from "../components/ui/BadgeEstado";
 import { SearchBar } from "../components/ui/SearchBar";
 import { useNavigate } from "react-router-dom";
@@ -14,11 +14,15 @@ export const UltimasOrdenes = ({
     onOrdenActualizada
 }) => {
 
-
     const [buscar, setBuscar] = useState("");
     const [tecnicosSeleccionados, setTecnicosSeleccionados] = useState({});
+    const [clienteExpandido, setClienteExpandido] = useState(null);
+
     const navigate = useNavigate();
 
+    // --------------------------------
+    // CAMBIO DE TÉCNICO SELECCIONADO
+    // --------------------------------
 
     const handleTecnicoChange = (ordenId, tecnicoId) => {
 
@@ -28,6 +32,11 @@ export const UltimasOrdenes = ({
         }));
 
     };
+
+
+    // --------------------------------
+    // ASIGNAR TÉCNICO
+    // --------------------------------
 
     const handleAsignarTecnico = async (ordenId, tecnicoId) => {
 
@@ -43,8 +52,10 @@ export const UltimasOrdenes = ({
             );
 
             toast.success(
-                response.message || "Técnico asignado correctamente."
+                response.message ||
+                "Técnico asignado correctamente."
             );
+
             if (onOrdenActualizada) {
                 onOrdenActualizada();
             }
@@ -65,323 +76,625 @@ export const UltimasOrdenes = ({
 
     };
 
+
+    // --------------------------------
+    // FORMATEAR FECHA
+    // --------------------------------
+
     const formatearFecha = (fecha) => {
 
         if (!fecha) return "";
 
         const fechaObj = new Date(fecha);
 
-        const dia = String(fechaObj.getDate()).padStart(2, "0");
-        const mes = String(fechaObj.getMonth() + 1).padStart(2, "0");
+        const dia = String(
+            fechaObj.getDate()
+        ).padStart(2, "0");
+
+        const mes = String(
+            fechaObj.getMonth() + 1
+        ).padStart(2, "0");
+
         const ano = fechaObj.getFullYear();
 
         return `${dia}/${mes}/${ano}`;
 
     };
 
-    const ultimasCinco = ordenes.slice(0, 6);
+
+    // --------------------------------
+    // ÚLTIMAS 5 ÓRDENES
+    // --------------------------------
+
+    const ultimasCinco = ordenes.slice(0, 5);
+
+
+    // --------------------------------
+    // FILTRAR ÓRDENES
+    // --------------------------------
 
     const ordenesFiltradas = ordenes.filter((orden) => {
 
         const texto = buscar.toLowerCase();
 
-
-
         return (
 
-            orden.numeroOrden?.toLowerCase().includes(texto) ||
+            orden.numeroOrden
+                ?.toLowerCase()
+                .includes(texto) ||
 
-            orden.cliente?.nombre?.toLowerCase().includes(texto) ||
+            orden.cliente?.nombre
+                ?.toLowerCase()
+                .includes(texto) ||
 
-            orden.cliente?.telefono?.toLowerCase().includes(texto) ||
+            orden.cliente?.telefono
+                ?.toLowerCase()
+                .includes(texto) ||
 
-            orden.marca?.toLowerCase().includes(texto) ||
+            orden.marca
+                ?.toLowerCase()
+                .includes(texto) ||
 
-            orden.modelo?.toLowerCase().includes(texto) ||
+            orden.modelo
+                ?.toLowerCase()
+                .includes(texto) ||
 
-            orden.estado?.toLowerCase().includes(texto)
+            orden.estado
+                ?.toLowerCase()
+                .includes(texto)
 
         );
 
     });
+
+
+    // --------------------------------
+    // QUÉ ÓRDENES MOSTRAR
+    // --------------------------------
 
     const ordenesMostrar =
         buscar.trim() === ""
             ? ultimasCinco
             : ordenesFiltradas;
 
+
+    // --------------------------------
+    // AGRUPAR POR CLIENTE
+    // --------------------------------
+
+    const ordenesPorCliente = ordenesMostrar.reduce(
+        (acumulador, orden) => {
+
+            const idCliente = orden.cliente?._id;
+
+            if (!idCliente) {
+                return acumulador;
+            }
+
+            const clienteExistente = acumulador.find(
+                (item) =>
+                    item.cliente._id === idCliente
+            );
+
+            if (clienteExistente) {
+
+                clienteExistente.ordenes.push(orden);
+
+            } else {
+
+                acumulador.push({
+                    cliente: orden.cliente,
+                    ordenes: [orden]
+                });
+
+            }
+
+            return acumulador;
+
+        },
+        []
+    );
+
+
     return (
 
         <div className="bg-white rounded-lg shadow mt-6">
+
+            {/* ENCABEZADO */}
+
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 p-4 border-b">
 
                 <p className="font-bold p-4 border-b">
-
                     Últimas Órdenes de Servicio
-
                 </p>
 
                 <SearchBar
-
                     placeholder="Buscar orden o cliente..."
-
                     value={buscar}
-
-                    onChange={(e) => setBuscar(e.target.value)}
-
+                    onChange={(e) =>
+                        setBuscar(e.target.value)
+                    }
                 />
 
             </div>
+
+
+            {/* TABLA */}
+
             <div className="overflow-x-auto">
 
                 <table className="min-w-[1450px] w-full border-collapse">
+
+                    {/* ENCABEZADOS */}
+
                     <thead className="bg-gray-100">
 
                         <tr>
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">Orden</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">
+                                Orden
+                            </th>
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">Cliente</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">
+                                Cliente
+                            </th>
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">Teléfono</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">
+                                Teléfono
+                            </th>
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">Equipo</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">
+                                Equipo
+                            </th>
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">Serial</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">
+                                Serial
+                            </th>
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">Daño reportado</th>
-                            <th className="px-4 py-3 text-left whitespace-nowrap">Estado</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">
+                                Daño reportado
+                            </th>
+
+                            <th className="px-4 py-3 text-left whitespace-nowrap">
+                                Estado
+                            </th>
+
                             <th className="px-4 py-3 text-left whitespace-nowrap">
                                 Técnico
                             </th>
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">Fecha</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">
+                                Fecha
+                            </th>
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">Ver</th>
-
-                            {/* <th className="px-4 py-3 text-left">Eliminar</th> */}
+                            <th className="px-4 py-3 text-left whitespace-nowrap">
+                                Ver
+                            </th>
 
                         </tr>
 
-
-
                     </thead>
+
+
+                    {/* CUERPO */}
 
                     <tbody>
 
-                        {
+                        {ordenesMostrar.length > 0 ? (
 
-                            ordenesMostrar.length > 0
+                            ordenesPorCliente.map((grupo) => {
 
-                                ?
+                                /*
+                                Tomamos la primera orden del grupo
+                                para representar al cliente en la
+                                fila principal.
+                                */
 
-                                ordenesMostrar.map((orden) => (
+                                const ordenPrincipal =
+                                    grupo.ordenes[0];
 
-                                    <tr
-                                        key={orden._id}
-                                        className="hover:bg-gray-50"
+                                return (
+
+                                    <Fragment
+                                        key={grupo.cliente._id}
                                     >
 
-                                        <td className="px-4 py-3">
+                                        {/* =========================
+                                            FILA PRINCIPAL DEL CLIENTE
+                                        ========================== */}
 
-                                            {orden.numeroOrden}
+                                        <tr className="hover:bg-gray-50">
 
-                                        </td>
+                                            {/* ORDEN */}
 
-                                        <td className="px-4 py-3">
+                                            <td className="px-4 py-3">
 
-                                            {orden.cliente?.nombre}
+                                                {ordenPrincipal?.numeroOrden ||
+                                                    "Sin orden"}
 
-                                        </td>
+                                            </td>
 
-                                        <td className="px-4 py-3">
 
-                                            {orden.cliente?.telefono}
+                                            {/* CLIENTE */}
 
-                                        </td>
+                                            <td className="px-4 py-3">
 
-                                        <td className="px-4 py-3">
+                                                <div className="flex items-center gap-2">
 
-                                            <div className="font-medium">
-                                                {orden.marca} {orden.modelo}
-                                            </div>
-
-                                            <div className="text-sm text-gray-500">
-                                                {orden.tipoEquipo}
-                                            </div>
-
-                                        </td>
-
-                                        <td className="px-4 py-3">
-
-                                            {orden.serial || "Sin serial"}
-
-                                        </td>
-
-                                        <td className="px-4 py-3 max-w-xs">
-
-                                            <p
-                                                className="truncate"
-                                                title={orden.problemaReportado}
-                                            >
-                                                {orden.problemaReportado || "Sin información"}
-                                            </p>
-
-                                        </td>
-
-                                        <td className="px-4 py-3">
-
-                                            <BadgeEstado
-
-                                                estado={orden.estado}
-
-                                            />
-
-                                        </td>
-
-                                        <td className="px-4 py-3">
-
-                                            <select
-                                                value={
-                                                    tecnicosSeleccionados[orden._id] ||
-                                                    orden.tecnicoAsignado?._id ||
-                                                    ""
-                                                } onChange={(e) =>
-                                                    handleTecnicoChange(
-                                                        orden._id,
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className="border border-gray-300 rounded-lg px-3 py-2 bg-white w-48 text-sm"                                            >
-
-                                                <option value="">
-                                                    Seleccionar técnico
-                                                </option>
-
-                                                {tecnicos.map((tecnico) => (
-
-                                                    <option
-                                                        key={tecnico._id}
-                                                        value={tecnico._id}
+                                                    <button
+                                                        onClick={() =>
+                                                            setClienteExpandido(
+                                                                clienteExpandido ===
+                                                                    grupo.cliente._id
+                                                                    ? null
+                                                                    : grupo.cliente._id
+                                                            )
+                                                        }
+                                                        className="text-blue-600 font-bold"
                                                     >
-                                                        {tecnico.nombre}
+
+                                                        {clienteExpandido ===
+                                                        grupo.cliente._id
+                                                            ? "▼"
+                                                            : "▶"}
+
+                                                    </button>
+
+                                                    <span>
+                                                        {grupo.cliente?.nombre}
+                                                    </span>
+
+                                                    <span className="text-gray-500">
+
+                                                        {grupo.ordenes.length}
+
+                                                        {grupo.ordenes.length === 1
+                                                            ? " solicitud"
+                                                            : " solicitudes"}
+
+                                                    </span>
+
+                                                </div>
+
+                                            </td>
+
+
+                                            {/* TELÉFONO */}
+
+                                            <td className="px-4 py-3">
+
+                                                {grupo.cliente?.telefono}
+
+                                            </td>
+
+
+                                            {/* EQUIPO */}
+
+                                            <td className="px-4 py-3">
+
+                                                <div className="font-medium">
+
+                                                    {ordenPrincipal?.marca}{" "}
+                                                    {ordenPrincipal?.modelo}
+
+                                                </div>
+
+                                                <div className="text-sm text-gray-500">
+
+                                                    {ordenPrincipal?.tipoEquipo}
+
+                                                </div>
+
+                                            </td>
+
+
+                                            {/* SERIAL */}
+
+                                            <td className="px-4 py-3">
+
+                                                {ordenPrincipal?.serial ||
+                                                    "Sin serial"}
+
+                                            </td>
+
+
+                                            {/* DAÑO */}
+
+                                            <td className="px-4 py-3 max-w-xs">
+
+                                                <p
+                                                    className="truncate"
+                                                    title={
+                                                        ordenPrincipal?.problemaReportado
+                                                    }
+                                                >
+
+                                                    {ordenPrincipal?.problemaReportado ||
+                                                        "Sin información"}
+
+                                                </p>
+
+                                            </td>
+
+
+                                            {/* ESTADO */}
+
+                                            <td className="px-4 py-3">
+
+                                                <BadgeEstado
+                                                    estado={
+                                                        ordenPrincipal?.estado
+                                                    }
+                                                />
+
+                                            </td>
+
+
+                                            {/* TÉCNICO */}
+
+                                            <td className="px-4 py-3">
+
+                                                <select
+                                                    value={
+                                                        tecnicosSeleccionados[
+                                                            ordenPrincipal?._id
+                                                        ] ||
+                                                        ordenPrincipal?.tecnicoAsignado?._id ||
+                                                        ""
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleTecnicoChange(
+                                                            ordenPrincipal._id,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="border border-gray-300 rounded-lg px-3 py-2 bg-white w-48 text-sm"
+                                                >
+
+                                                    <option value="">
+                                                        Seleccionar técnico
                                                     </option>
 
-                                                ))}
+                                                    {tecnicos.map(
+                                                        (tecnico) => (
 
-                                            </select>
-                                            {(
-                                                !orden.tecnicoAsignado ||
-                                                (
-                                                    tecnicosSeleccionados[orden._id] &&
-                                                    tecnicosSeleccionados[orden._id] !== orden.tecnicoAsignado._id
-                                                )
-                                            ) && (
+                                                            <option
+                                                                key={
+                                                                    tecnico._id
+                                                                }
+                                                                value={
+                                                                    tecnico._id
+                                                                }
+                                                            >
+
+                                                                {
+                                                                    tecnico.nombre
+                                                                }
+
+                                                            </option>
+
+                                                        )
+                                                    )}
+
+                                                </select>
+
+
+                                                {(
+                                                    !ordenPrincipal?.tecnicoAsignado ||
+
+                                                    (
+                                                        tecnicosSeleccionados[
+                                                            ordenPrincipal?._id
+                                                        ] &&
+
+                                                        tecnicosSeleccionados[
+                                                            ordenPrincipal?._id
+                                                        ] !==
+                                                            ordenPrincipal?.tecnicoAsignado?._id
+                                                    )
+
+                                                ) && (
 
                                                     <button
                                                         onClick={() =>
                                                             handleAsignarTecnico(
-                                                                orden._id,
-                                                                tecnicosSeleccionados[orden._id]
+                                                                ordenPrincipal._id,
+                                                                tecnicosSeleccionados[
+                                                                    ordenPrincipal._id
+                                                                ]
                                                             )
                                                         }
-                                                        disabled={!tecnicosSeleccionados[orden._id]}
+                                                        disabled={
+                                                            !tecnicosSeleccionados[
+                                                                ordenPrincipal._id
+                                                            ]
+                                                        }
                                                         className="mt-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-3 py-1.5 rounded-lg text-sm transition"
                                                     >
-                                                        {
-                                                            orden.tecnicoAsignado
-                                                                ? "Reasignar"
-                                                                : "Asignar"
-                                                        }
+
+                                                        {ordenPrincipal?.tecnicoAsignado
+                                                            ? "Reasignar"
+                                                            : "Asignar"}
+
                                                     </button>
 
                                                 )}
 
-                                        </td>
+                                            </td>
 
-                                        <td className="px-4 py-3">
 
-                                            {formatearFecha(orden.createdAt)}
+                                            {/* FECHA */}
 
-                                        </td>
+                                            <td className="px-4 py-3">
 
-                                        <td>
+                                                {formatearFecha(
+                                                    ordenPrincipal?.createdAt
+                                                )}
 
-                                            {/* <button
+                                            </td>
 
-                                                onClick={() =>  onEditar?.(orden)}
 
-                                                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition-all duration-200 hover:scale-105"
+                                            {/* VER */}
 
-                                            >
+                                            <td className="px-4 py-3">
 
-                                                <Pencil size={18} />
+                                                <button
+                                                    onClick={() =>
+                                                        navigate(
+                                                            `/ordenServicio/${ordenPrincipal._id}`
+                                                        )
+                                                    }
+                                                    className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg shadow transition"
+                                                >
 
-                                            </button> */}
+                                                    <Pencil size={18} />
 
-                                            <button
-                                                onClick={() => navigate(`/ordenServicio/${orden._id}`)}
-                                                className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg shadow transition"
-                                            >
-                                                <Pencil size={18} />
-                                            </button>
+                                                </button>
 
-                                        </td>
+                                            </td>
 
-                                        <td>
+                                        </tr>
 
-                                            {/* <button
 
-                                                onClick={() => onEliminar?.(orden._id)}
+                                        {/* =========================
+                                            SOLICITUDES DEL CLIENTE
+                                        ========================== */}
 
-                                                className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-md transition-all duration-200 hover:scale-105"
+                                        {clienteExpandido ===
+                                            grupo.cliente._id && (
 
-                                            >
+                                            <tr>
 
-                                                <Trash size={18} />
+                                                <td
+                                                    colSpan={10}
+                                                    className="px-6 py-4 bg-gray-50"
+                                                >
 
-                                            </button> */}
+                                                    <div className="space-y-2">
 
-                                        </td>
+                                                        {grupo.ordenes.map(
+                                                            (orden) => (
 
-                                    </tr>
+                                                                <div
+                                                                    key={
+                                                                        orden._id
+                                                                    }
+                                                                    className="flex items-center justify-between gap-4 p-3 bg-white rounded-lg border hover:bg-gray-50"
+                                                                >
 
-                                ))
+                                                                    {/* INFORMACIÓN */}
 
-                                :
+                                                                    <div className="flex items-center gap-6">
 
-                                <tr>
+                                                                        <span className="font-semibold">
 
-                                    <td colSpan={10}>
-                                        <div className="flex flex-col items-center justify-center py-16">
+                                                                            {
+                                                                                orden.numeroOrden
+                                                                            }
 
-                                            <ClipboardList
+                                                                        </span>
 
-                                                size={60}
+                                                                        <span>
 
-                                                className="text-gray-400"
+                                                                            {
+                                                                                orden.marca
+                                                                            }{" "}
 
-                                            />
+                                                                            {
+                                                                                orden.modelo
+                                                                            }
 
-                                            <p className="text-xl font-semibold mt-4">
+                                                                        </span>
 
-                                                No hay órdenes registradas
+                                                                        <BadgeEstado
+                                                                            estado={
+                                                                                orden.estado
+                                                                            }
+                                                                        />
 
-                                            </p>
+                                                                        <span className="text-gray-500">
 
-                                            <p className="text-gray-400 animate-pulse">
+                                                                            {
+                                                                                formatearFecha(
+                                                                                    orden.createdAt
+                                                                                )
+                                                                            }
 
-                                                Presione "Crear Orden de Servicio"
+                                                                        </span>
 
-                                            </p>
+                                                                    </div>
 
-                                        </div>
 
-                                    </td>
+                                                                    {/* VER ORDEN */}
 
-                                </tr>
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            navigate(
+                                                                                `/ordenServicio/${orden._id}`
+                                                                            )
+                                                                        }
+                                                                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg"
+                                                                    >
 
-                        }
+                                                                        Ver
+
+                                                                    </button>
+
+                                                                </div>
+
+                                                            )
+                                                        )}
+
+                                                    </div>
+
+                                                </td>
+
+                                            </tr>
+
+                                        )}
+
+                                    </Fragment>
+
+                                );
+
+                            })
+
+                        ) : (
+
+                            /* =========================
+                               SIN ÓRDENES
+                            ========================== */
+
+                            <tr>
+
+                                <td colSpan={10}>
+
+                                    <div className="flex flex-col items-center justify-center py-16">
+
+                                        <ClipboardList
+                                            size={60}
+                                            className="text-gray-400"
+                                        />
+
+                                        <p className="text-xl font-semibold mt-4">
+
+                                            No hay órdenes registradas
+
+                                        </p>
+
+                                        <p className="text-gray-400 animate-pulse">
+
+                                            Presione "Crear Orden de Servicio"
+
+                                        </p>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        )}
 
                     </tbody>
 
@@ -390,7 +703,6 @@ export const UltimasOrdenes = ({
             </div>
 
         </div>
-
 
     );
 

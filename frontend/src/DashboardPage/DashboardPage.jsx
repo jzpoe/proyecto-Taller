@@ -135,7 +135,7 @@ const ordenesListas = ordenes.filter((orden) => {
         const response = await obtenerOrdenes();
 
         setOrdenes(response.data);
-        console.log("aqui llegan las oedenes: ", ordenes)
+        
 
     };
 
