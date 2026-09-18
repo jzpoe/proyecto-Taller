@@ -106,7 +106,7 @@ export const UltimasOrdenes = ({
     // ÚLTIMAS 5 ÓRDENES
     // --------------------------------
 
-    const ultimasCinco = ordenes.slice(0, 5);
+    const ultimasCinco = ordenes.slice(0, 10);
 
 
     // --------------------------------
