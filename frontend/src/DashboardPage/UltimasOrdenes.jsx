@@ -1,6 +1,6 @@
 import { useState, Fragment } from "react";
 import toast from "react-hot-toast";
-import { Pencil, ClipboardList } from "lucide-react";
+import { ClipboardList } from "lucide-react";
 import { BadgeEstado } from "../components/ui/BadgeEstado";
 import { SearchBar } from "../components/ui/SearchBar";
 import { useNavigate } from "react-router-dom";
@@ -20,9 +20,9 @@ export const UltimasOrdenes = ({
 
     const navigate = useNavigate();
 
-    // --------------------------------
-    // CAMBIO DE TÉCNICO SELECCIONADO
-    // --------------------------------
+    // ================================
+    // CAMBIO DE TÉCNICO
+    // ================================
 
     const handleTecnicoChange = (ordenId, tecnicoId) => {
 
@@ -33,16 +33,13 @@ export const UltimasOrdenes = ({
 
     };
 
-
-    // --------------------------------
+    // ================================
     // ASIGNAR TÉCNICO
-    // --------------------------------
+    // ================================
 
     const handleAsignarTecnico = async (ordenId, tecnicoId) => {
 
-        if (!tecnicoId) {
-            return;
-        }
+        if (!tecnicoId) return;
 
         try {
 
@@ -76,10 +73,9 @@ export const UltimasOrdenes = ({
 
     };
 
-
-    // --------------------------------
+    // ================================
     // FORMATEAR FECHA
-    // --------------------------------
+    // ================================
 
     const formatearFecha = (fecha) => {
 
@@ -101,17 +97,15 @@ export const UltimasOrdenes = ({
 
     };
 
-
-    // --------------------------------
-    // ÚLTIMAS 5 ÓRDENES
-    // --------------------------------
+    // ================================
+    // ÚLTIMAS 10 ÓRDENES
+    // ================================
 
     const ultimasCinco = ordenes.slice(0, 10);
 
-
-    // --------------------------------
-    // FILTRAR ÓRDENES
-    // --------------------------------
+    // ================================
+    // FILTRAR
+    // ================================
 
     const ordenesFiltradas = ordenes.filter((orden) => {
 
@@ -147,20 +141,18 @@ export const UltimasOrdenes = ({
 
     });
 
-
-    // --------------------------------
-    // QUÉ ÓRDENES MOSTRAR
-    // --------------------------------
+    // ================================
+    // QUÉ MOSTRAR
+    // ================================
 
     const ordenesMostrar =
         buscar.trim() === ""
             ? ultimasCinco
             : ordenesFiltradas;
 
-
-    // --------------------------------
+    // ================================
     // AGRUPAR POR CLIENTE
-    // --------------------------------
+    // ================================
 
     const ordenesPorCliente = ordenesMostrar.reduce(
         (acumulador, orden) => {
@@ -195,510 +187,504 @@ export const UltimasOrdenes = ({
         []
     );
 
-
     return (
 
-        <div className="bg-white rounded-lg shadow mt-6">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm mt-6 overflow-hidden">
 
-            {/* ENCABEZADO */}
+            {/* ================================
+                ENCABEZADO
+            ================================= */}
 
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 p-4 border-b">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 px-6 py-5 border-b border-gray-100 bg-white">
 
-                <p className="font-bold p-4 border-b">
-                    Últimas Órdenes de Servicio
-                </p>
+                <div>
 
-                <SearchBar
-                    placeholder="Buscar orden o cliente..."
-                    value={buscar}
-                    onChange={(e) =>
-                        setBuscar(e.target.value)
-                    }
-                />
+                    <p className="font-semibold text-gray-800 text-lg">
+                        Últimas Órdenes de Servicio
+                    </p>
+
+                    <p className="text-sm text-gray-400 mt-1">
+                        Resumen de las solicitudes más recientes
+                    </p>
+
+                </div>
+
+                <div className="w-full md:w-80">
+
+                    <SearchBar
+                        placeholder="Buscar orden o cliente..."
+                        value={buscar}
+                        onChange={(e) =>
+                            setBuscar(e.target.value)
+                        }
+                    />
+
+                </div>
 
             </div>
 
 
-            {/* TABLA */}
+            {/* ================================
+                CONTENIDO
+            ================================= */}
 
-            <div className="overflow-x-auto">
+            <div className="p-4 md:p-5 bg-gray-50/60">
 
-                <table className="min-w-[1450px] w-full border-collapse">
+                {ordenesMostrar.length > 0 ? (
 
-                    {/* ENCABEZADOS */}
+                    <div className="space-y-3">
 
-                    <thead className="bg-gray-100">
+                        {ordenesPorCliente.map((grupo) => {
 
-                        <tr>
+                            const expandido =
+                                clienteExpandido ===
+                                grupo.cliente._id;
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">
-                                Orden
-                            </th>
+                            return (
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">
-                                Cliente
-                            </th>
+                                <Fragment
+                                    key={grupo.cliente._id}
+                                >
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">
-                                Teléfono
-                            </th>
+                                    {/* =========================
+                                        CLIENTE
+                                    ========================== */}
 
-                            <th className="px-4 py-3 text-left whitespace-nowrap">
-                                Equipo
-                            </th>
-
-                            <th className="px-4 py-3 text-left whitespace-nowrap">
-                                Serial
-                            </th>
-
-                            <th className="px-4 py-3 text-left whitespace-nowrap">
-                                Daño reportado
-                            </th>
-
-                            <th className="px-4 py-3 text-left whitespace-nowrap">
-                                Estado
-                            </th>
-
-                            <th className="px-4 py-3 text-left whitespace-nowrap">
-                                Técnico
-                            </th>
-
-                            <th className="px-4 py-3 text-left whitespace-nowrap">
-                                Fecha
-                            </th>
-
-                            <th className="px-4 py-3 text-left whitespace-nowrap">
-                                Ver
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    {/* CUERPO */}
-
-                    <tbody>
-
-                        {ordenesMostrar.length > 0 ? (
-
-                            ordenesPorCliente.map((grupo) => {
-
-                                /*
-                                Tomamos la primera orden del grupo
-                                para representar al cliente en la
-                                fila principal.
-                                */
-
-                                const ordenPrincipal =
-                                    grupo.ordenes[0];
-
-                                return (
-
-                                    <Fragment
-                                        key={grupo.cliente._id}
+                                    <div
+                                        className={`
+                                            bg-white
+                                            border
+                                            border-gray-200
+                                            rounded-xl
+                                            overflow-hidden
+                                            transition-all
+                                            duration-200
+                                            ${expandido
+                                                ? "shadow-sm"
+                                                : "shadow-none"
+                                            }
+                                        `}
                                     >
 
-                                        {/* =========================
-                                            FILA PRINCIPAL DEL CLIENTE
-                                        ========================== */}
+                                        {/* CABECERA CLIENTE */}
 
-                                        <tr className="hover:bg-gray-50">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setClienteExpandido(
+                                                    expandido
+                                                        ? null
+                                                        : grupo.cliente._id
+                                                )
+                                            }
+                                            className="
+                                                w-full
+                                                flex
+                                                items-center
+                                                justify-between
+                                                px-5
+                                                py-4
+                                                text-left
+                                                hover:bg-gray-50
+                                                transition
+                                            "
+                                        >
 
-                                            {/* ORDEN */}
+                                            <div className="flex items-center gap-3">
 
-                                            <td className="px-4 py-3">
-
-                                                {ordenPrincipal?.numeroOrden ||
-                                                    "Sin orden"}
-
-                                            </td>
-
-
-                                            {/* CLIENTE */}
-
-                                            <td className="px-4 py-3">
-
-                                                <div className="flex items-center gap-2">
-
-                                                    <button
-                                                        onClick={() =>
-                                                            setClienteExpandido(
-                                                                clienteExpandido ===
-                                                                    grupo.cliente._id
-                                                                    ? null
-                                                                    : grupo.cliente._id
-                                                            )
-                                                        }
-                                                        className="text-blue-600 font-bold"
-                                                    >
-
-                                                        {clienteExpandido ===
-                                                        grupo.cliente._id
-                                                            ? "▼"
-                                                            : "▶"}
-
-                                                    </button>
-
-                                                    <span>
-                                                        {grupo.cliente?.nombre}
-                                                    </span>
-
-                                                    <span className="text-gray-500">
-
-                                                        {grupo.ordenes.length}
-
-                                                        {grupo.ordenes.length === 1
-                                                            ? " solicitud"
-                                                            : " solicitudes"}
-
-                                                    </span>
-
-                                                </div>
-
-                                            </td>
-
-
-                                            {/* TELÉFONO */}
-
-                                            <td className="px-4 py-3">
-
-                                                {grupo.cliente?.telefono}
-
-                                            </td>
-
-
-                                            {/* EQUIPO */}
-
-                                            <td className="px-4 py-3">
-
-                                                <div className="font-medium">
-
-                                                    {ordenPrincipal?.marca}{" "}
-                                                    {ordenPrincipal?.modelo}
-
-                                                </div>
-
-                                                <div className="text-sm text-gray-500">
-
-                                                    {ordenPrincipal?.tipoEquipo}
-
-                                                </div>
-
-                                            </td>
-
-
-                                            {/* SERIAL */}
-
-                                            <td className="px-4 py-3">
-
-                                                {ordenPrincipal?.serial ||
-                                                    "Sin serial"}
-
-                                            </td>
-
-
-                                            {/* DAÑO */}
-
-                                            <td className="px-4 py-3 max-w-xs">
-
-                                                <p
-                                                    className="truncate"
-                                                    title={
-                                                        ordenPrincipal?.problemaReportado
-                                                    }
+                                                <span
+                                                    className="
+                                                        flex
+                                                        items-center
+                                                        justify-center
+                                                        w-7
+                                                        h-7
+                                                        rounded-full
+                                                        bg-blue-50
+                                                        text-blue-600
+                                                        text-sm
+                                                    "
                                                 >
-
-                                                    {ordenPrincipal?.problemaReportado ||
-                                                        "Sin información"}
-
-                                                </p>
-
-                                            </td>
-
-
-                                            {/* ESTADO */}
-
-                                            <td className="px-4 py-3">
-
-                                                <BadgeEstado
-                                                    estado={
-                                                        ordenPrincipal?.estado
-                                                    }
-                                                />
-
-                                            </td>
-
-
-                                            {/* TÉCNICO */}
-
-                                            <td className="px-4 py-3">
-
-                                                <select
-                                                    value={
-                                                        tecnicosSeleccionados[
-                                                            ordenPrincipal?._id
-                                                        ] ||
-                                                        ordenPrincipal?.tecnicoAsignado?._id ||
-                                                        ""
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleTecnicoChange(
-                                                            ordenPrincipal._id,
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                    className="border border-gray-300 rounded-lg px-3 py-2 bg-white w-48 text-sm"
-                                                >
-
-                                                    <option value="">
-                                                        Seleccionar técnico
-                                                    </option>
-
-                                                    {tecnicos.map(
-                                                        (tecnico) => (
-
-                                                            <option
-                                                                key={
-                                                                    tecnico._id
-                                                                }
-                                                                value={
-                                                                    tecnico._id
-                                                                }
-                                                            >
-
-                                                                {
-                                                                    tecnico.nombre
-                                                                }
-
-                                                            </option>
-
-                                                        )
-                                                    )}
-
-                                                </select>
-
-
-                                                {(
-                                                    !ordenPrincipal?.tecnicoAsignado ||
-
-                                                    (
-                                                        tecnicosSeleccionados[
-                                                            ordenPrincipal?._id
-                                                        ] &&
-
-                                                        tecnicosSeleccionados[
-                                                            ordenPrincipal?._id
-                                                        ] !==
-                                                            ordenPrincipal?.tecnicoAsignado?._id
-                                                    )
-
-                                                ) && (
-
-                                                    <button
-                                                        onClick={() =>
-                                                            handleAsignarTecnico(
-                                                                ordenPrincipal._id,
-                                                                tecnicosSeleccionados[
-                                                                    ordenPrincipal._id
-                                                                ]
-                                                            )
-                                                        }
-                                                        disabled={
-                                                            !tecnicosSeleccionados[
-                                                                ordenPrincipal._id
-                                                            ]
-                                                        }
-                                                        className="mt-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-3 py-1.5 rounded-lg text-sm transition"
-                                                    >
-
-                                                        {ordenPrincipal?.tecnicoAsignado
-                                                            ? "Reasignar"
-                                                            : "Asignar"}
-
-                                                    </button>
-
-                                                )}
-
-                                            </td>
-
-
-                                            {/* FECHA */}
-
-                                            <td className="px-4 py-3">
-
-                                                {formatearFecha(
-                                                    ordenPrincipal?.createdAt
-                                                )}
-
-                                            </td>
-
-
-                                            {/* VER */}
-
-                                            <td className="px-4 py-3">
-
-                                                <button
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/ordenServicio/${ordenPrincipal._id}`
-                                                        )
-                                                    }
-                                                    className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg shadow transition"
-                                                >
-
-                                                    <Pencil size={18} />
-
-                                                </button>
-
-                                            </td>
-
-                                        </tr>
-
-
-                                        {/* =========================
-                                            SOLICITUDES DEL CLIENTE
-                                        ========================== */}
-
-                                        {clienteExpandido ===
-                                            grupo.cliente._id && (
-
-                                            <tr>
-
-                                                <td
-                                                    colSpan={10}
-                                                    className="px-6 py-4 bg-gray-50"
-                                                >
-
-                                                    <div className="space-y-2">
-
-                                                        {grupo.ordenes.map(
-                                                            (orden) => (
-
-                                                                <div
-                                                                    key={
-                                                                        orden._id
-                                                                    }
-                                                                    className="flex items-center justify-between gap-4 p-3 bg-white rounded-lg border hover:bg-gray-50"
-                                                                >
-
-                                                                    {/* INFORMACIÓN */}
-
-                                                                    <div className="flex items-center gap-6">
-
-                                                                        <span className="font-semibold">
-
-                                                                            {
-                                                                                orden.numeroOrden
-                                                                            }
-
-                                                                        </span>
-
-                                                                        <span>
-
-                                                                            {
-                                                                                orden.marca
-                                                                            }{" "}
-
-                                                                            {
-                                                                                orden.modelo
-                                                                            }
-
-                                                                        </span>
-
-                                                                        <BadgeEstado
-                                                                            estado={
-                                                                                orden.estado
-                                                                            }
-                                                                        />
-
-                                                                        <span className="text-gray-500">
-
-                                                                            {
-                                                                                formatearFecha(
-                                                                                    orden.createdAt
-                                                                                )
-                                                                            }
-
-                                                                        </span>
-
-                                                                    </div>
-
-
-                                                                    {/* VER ORDEN */}
-
-                                                                    <button
-                                                                        onClick={() =>
-                                                                            navigate(
-                                                                                `/ordenServicio/${orden._id}`
-                                                                            )
-                                                                        }
-                                                                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg"
-                                                                    >
-
-                                                                        Ver
-
-                                                                    </button>
-
-                                                                </div>
-
-                                                            )
-                                                        )}
+                                                    {expandido
+                                                        ? "−"
+                                                        : "+"}
+                                                </span>
+
+                                                <div>
+
+                                                    <div className="flex items-center gap-2">
+
+                                                        <span className="font-semibold text-gray-800">
+                                                            {grupo.cliente?.nombre}
+                                                        </span>
+
+                                                        <span className="text-sm text-gray-400">
+                                                            {grupo.ordenes.length}
+                                                            {grupo.ordenes.length === 1
+                                                                ? " solicitud"
+                                                                : " solicitudes"}
+                                                        </span>
 
                                                     </div>
 
-                                                </td>
+                                                </div>
 
-                                            </tr>
+                                            </div>
+
+                                            <span className="text-sm text-gray-400">
+
+                                                {grupo.cliente?.telefono}
+
+                                            </span>
+
+                                        </button>
+
+
+                                        {/* =========================
+                                            ÓRDENES DEL CLIENTE
+                                        ========================== */}
+
+                                        {expandido && (
+
+                                            <div className="px-4 pb-4 space-y-3">
+
+                                                {grupo.ordenes.map((orden) => (
+
+                                                    <div
+                                                        key={orden._id}
+                                                        className="
+                                                            bg-white
+                                                            border
+                                                            border-gray-200
+                                                            rounded-xl
+                                                            p-4
+                                                            shadow-sm
+                                                            hover:shadow-md
+                                                            hover:border-gray-300
+                                                            transition-all
+                                                            duration-200
+                                                        "
+                                                    >
+
+                                                        {/* INFORMACIÓN */}
+
+                                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+
+                                                            {/* ORDEN */}
+
+                                                            <div>
+
+                                                                <p className="text-xs text-gray-400 mb-1">
+                                                                    Orden
+                                                                </p>
+
+                                                                <p className="font-semibold text-gray-800">
+                                                                    {orden.numeroOrden}
+                                                                </p>
+
+                                                            </div>
+
+
+                                                            {/* TELÉFONO */}
+
+                                                            <div>
+
+                                                                <p className="text-xs text-gray-400 mb-1">
+                                                                    Teléfono
+                                                                </p>
+
+                                                                <p className="text-gray-700">
+                                                                    {orden.cliente?.telefono}
+                                                                </p>
+
+                                                            </div>
+
+
+                                                            {/* EQUIPO */}
+
+                                                            <div>
+
+                                                                <p className="text-xs text-gray-400 mb-1">
+                                                                    Equipo
+                                                                </p>
+
+                                                                <p className="text-gray-700">
+                                                                    {orden.marca} {orden.modelo}
+                                                                </p>
+
+                                                            </div>
+
+
+                                                            {/* SERIAL */}
+
+                                                            <div>
+
+                                                                <p className="text-xs text-gray-400 mb-1">
+                                                                    Serial
+                                                                </p>
+
+                                                                <p className="text-gray-700">
+                                                                    {orden.serial || "Sin serial"}
+                                                                </p>
+
+                                                            </div>
+
+
+                                                            {/* PROBLEMA */}
+
+                                                            <div>
+
+                                                                <p className="text-xs text-gray-400 mb-1">
+                                                                    Problema reportado
+                                                                </p>
+
+                                                                <p
+                                                                    className="text-gray-700 truncate"
+                                                                    title={orden.problemaReportado}
+                                                                >
+                                                                    {orden.problemaReportado ||
+                                                                        "Sin información"}
+                                                                </p>
+
+                                                            </div>
+
+
+                                                            {/* ESTADO */}
+
+                                                            <div>
+
+                                                                <p className="text-xs text-gray-400 mb-1">
+                                                                    Estado del técnico
+                                                                </p>
+
+                                                                <BadgeEstado
+                                                                    estado={orden.estado}
+                                                                />
+
+                                                            </div>
+
+                                                        </div>
+
+
+                                                        {/* LÍNEA */}
+
+                                                        <div className="border-t border-gray-100 my-4"></div>
+
+
+                                                        {/* ACCIONES */}
+
+                                                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+
+                                                            {/* FECHA */}
+
+                                                            <div>
+
+                                                                <p className="text-xs text-gray-400 mb-1">
+                                                                    Fecha
+                                                                </p>
+
+                                                                <p className="text-sm text-gray-500">
+                                                                    {formatearFecha(
+                                                                        orden.createdAt
+                                                                    )}
+                                                                </p>
+
+                                                            </div>
+
+
+                                                            {/* TÉCNICO */}
+
+                                                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+
+                                                                <select
+                                                                    value={
+                                                                        tecnicosSeleccionados[orden._id] ||
+                                                                        orden.tecnicoAsignado?._id ||
+                                                                        ""
+                                                                    }
+                                                                    onChange={(e) =>
+                                                                        handleTecnicoChange(
+                                                                            orden._id,
+                                                                            e.target.value
+                                                                        )
+                                                                    }
+                                                                    className="
+                                                                        border
+                                                                        border-gray-200
+                                                                        rounded-lg
+                                                                        px-3
+                                                                        py-2
+                                                                        bg-white
+                                                                        text-sm
+                                                                        text-gray-700
+                                                                        outline-none
+                                                                        focus:ring-2
+                                                                        focus:ring-blue-100
+                                                                        focus:border-blue-300
+                                                                        transition
+                                                                    "
+                                                                >
+
+                                                                    <option value="">
+                                                                        Seleccionar técnico
+                                                                    </option>
+
+                                                                    {tecnicos.map((tecnico) => (
+
+                                                                        <option
+                                                                            key={tecnico._id}
+                                                                            value={tecnico._id}
+                                                                        >
+                                                                            {tecnico.nombre}
+                                                                        </option>
+
+                                                                    ))}
+
+                                                                </select>
+
+
+                                                                {/* ASIGNAR */}
+
+                                                                {(
+                                                                    !orden.tecnicoAsignado ||
+                                                                    (
+                                                                        tecnicosSeleccionados[orden._id] &&
+                                                                        tecnicosSeleccionados[orden._id] !==
+                                                                        orden.tecnicoAsignado._id
+                                                                    )
+                                                                ) && (
+
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleAsignarTecnico(
+                                                                                    orden._id,
+                                                                                    tecnicosSeleccionados[orden._id]
+                                                                                )
+                                                                            }
+                                                                            disabled={
+                                                                                !tecnicosSeleccionados[orden._id]
+                                                                            }
+                                                                            className="
+                                                                                bg-blue-600
+                                                                                hover:bg-blue-700
+                                                                                disabled:bg-gray-200
+                                                                                disabled:text-gray-400
+                                                                                disabled:cursor-not-allowed
+                                                                                text-white
+                                                                                px-4
+                                                                                py-2
+                                                                                rounded-lg
+                                                                                text-sm
+                                                                                transition
+                                                                            "
+                                                                        >
+                                                                            {orden.tecnicoAsignado
+                                                                                ? "Reasignar"
+                                                                                : "Asignar"}
+                                                                        </button>
+
+                                                                    )}
+
+                                                            </div>
+
+
+                                                            {/* BOTONES */}
+
+                                                            <div className="flex items-center gap-2">
+
+                                                                {/* VER */}
+
+                                                                <button
+                                                                    onClick={() =>
+                                                                        navigate(
+                                                                            `/ordenServicio/${orden._id}`
+                                                                        )
+                                                                    }
+                                                                    className="
+                                                                        bg-emerald-600
+                                                                        hover:bg-emerald-700
+                                                                        text-white
+                                                                        px-4
+                                                                        py-2
+                                                                        rounded-lg
+                                                                        text-sm
+                                                                        transition
+                                                                    "
+                                                                >
+                                                                    Ver
+                                                                </button>
+
+
+                                                                {/* ELIMINAR */}
+
+                                                                <button
+                                                                    onClick={() =>
+                                                                        onEliminar?.(orden._id)
+                                                                    }
+                                                                    className="
+                                                                        bg-red-500
+                                                                        hover:bg-red-600
+                                                                        text-white
+                                                                        px-4
+                                                                        py-2
+                                                                        rounded-lg
+                                                                        text-sm
+                                                                        transition
+                                                                    "
+                                                                >
+                                                                    Eliminar
+                                                                </button>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                ))}
+
+                                            </div>
 
                                         )}
 
-                                    </Fragment>
-
-                                );
-
-                            })
-
-                        ) : (
-
-                            /* =========================
-                               SIN ÓRDENES
-                            ========================== */
-
-                            <tr>
-
-                                <td colSpan={10}>
-
-                                    <div className="flex flex-col items-center justify-center py-16">
-
-                                        <ClipboardList
-                                            size={60}
-                                            className="text-gray-400"
-                                        />
-
-                                        <p className="text-xl font-semibold mt-4">
-
-                                            No hay órdenes registradas
-
-                                        </p>
-
-                                        <p className="text-gray-400 animate-pulse">
-
-                                            Presione "Crear Orden de Servicio"
-
-                                        </p>
-
                                     </div>
 
-                                </td>
+                                </Fragment>
 
-                            </tr>
+                            );
 
-                        )}
+                        })}
 
-                    </tbody>
+                    </div>
 
-                </table>
+                ) : (
+
+                    /* ================================
+                       SIN ÓRDENES
+                    ================================= */
+
+                    <div className="flex flex-col items-center justify-center py-16">
+
+                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+
+                            <ClipboardList
+                                size={32}
+                                className="text-gray-400"
+                            />
+
+                        </div>
+
+                        <p className="text-lg font-semibold text-gray-700">
+                            No hay órdenes registradas
+                        </p>
+
+                        <p className="text-sm text-gray-400 mt-1">
+                            Presione "Crear Orden de Servicio"
+                        </p>
+
+                    </div>
+
+                )}
 
             </div>
 

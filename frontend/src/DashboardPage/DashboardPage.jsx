@@ -58,26 +58,26 @@ export const DashboardPage = () => {
 
 
 
-   const totalEquipos = equipos.length;
+    const totalEquipos = equipos.length;
 
-const totalOrdenes = ordenes.length;
+    const totalOrdenes = ordenes.length;
 
-const equiposEnReparacion = equipos.filter((equipo) => {
-    return (
-        equipo.estado === "En Reparacion" ||
-        equipo.estado === "REPARACION"
-    );
-}).length;
+    const equiposEnReparacion = equipos.filter((equipo) => {
+        return (
+            equipo.estado === "En Reparacion" ||
+            equipo.estado === "REPARACION"
+        );
+    }).length;
 
-const clientesActivos = new Set(
-    clientes
-        .filter((cliente) => cliente.estado === "activo")
-        .map((cliente) => cliente.telefono)
-).size;
+    const clientesActivos = new Set(
+        clientes
+            .filter((cliente) => cliente.estado === "activo")
+            .map((cliente) => cliente.telefono)
+    ).size;
 
-const ordenesListas = ordenes.filter((orden) => {
-    return orden.estado === "Listo para entregar";
-}).length;
+    const ordenesListas = ordenes.filter((orden) => {
+        return orden.estado === "Listo para entregar";
+    }).length;
 
     const abrirModal = (modal) => {
         setModalAbierto(modal)
@@ -99,43 +99,41 @@ const ordenesListas = ordenes.filter((orden) => {
 
 
     const handleEliminar = async (equipos_id) => {
-
-
         try {
-
             const resultado = await Swal.fire({
                 icon: "warning",
-
                 title: "¿Está seguro?",
-
                 text: "Esta acción no se puede deshacer.",
-
                 showCancelButton: true,
-
                 confirmButtonText: "Sí, eliminar",
-
                 cancelButtonText: "Cancelar"
-            })
+            });
+
             if (resultado.isConfirmed) {
 
-                await eliminarEquipoOrdenServicio(equipos_id)
-                cargarOrdenes()
-                toast.success('El equipo se ha eliminado correctamente.');
+                await eliminarEquipoOrdenServicio(equipos_id);
 
+                // Volvemos a cargar las órdenes actualizadas
+                await cargarOrdenes();
+
+                toast.success("El equipo se ha eliminado correctamente.");
             }
 
         } catch (error) {
-            console.error("error al elimianr el equipo seleccionado", error)
+            console.error(
+                "Error al eliminar el equipo seleccionado:",
+                error
+            );
+
+            toast.error("No se pudo eliminar la orden.");
         }
-
-    }
-
+    };
     const cargarOrdenes = async () => {
 
         const response = await obtenerOrdenes();
 
         setOrdenes(response.data);
-        
+
 
     };
 
