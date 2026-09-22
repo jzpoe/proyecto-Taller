@@ -1,225 +1,756 @@
+
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import logo from "../assets/logo.png";
 
-export const generarOrdenPDF = (orden) => {
-    console.log("ORDEN PDF");
 
-    console.log(orden);
+/* =====================================================
+   TEXTO PARA EL INGRESO DEL EQUIPO
+===================================================== */
+
+const TEXTO_INGRESO = `El servicio técnico de 4Tech realizará la revisión del equipo. En caso de detectar trabajos previos o fallas no relacionadas con el servicio solicitado, se notificará oportunamente al cliente. No se asume responsabilidad por daños, modificaciones o desperfectos derivados de intervenciones anteriores o realizadas por terceros.
+
+Asimismo, una vez notificado sobre la finalización del servicio, el cliente dispone de un plazo máximo de seis (6) meses para reclamar su equipo. Transcurrido este tiempo, no se asume responsabilidad por los equipos dejados en el local.`;
+
+
+/* =====================================================
+   COLORES
+===================================================== */
+
+// Azul de los encabezados
+const AZUL = [30, 64, 175];
+
+// Gris muy suave para bordes
+const BORDE = [205, 210, 220];
+
+// Fondo suave de las etiquetas
+const FONDO_ETIQUETA = [248, 249, 251];
+
+// Texto principal
+const TEXTO = [45, 45, 45];
+
+// Texto secundario
+const TEXTO_SUAVE = [80, 80, 80];
+
+
+/* =====================================================
+   GENERAR PDF
+===================================================== */
+
+export const generarOrdenPDF = (orden) => {
+
     const doc = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
     });
 
+    // Encabezado
     dibujarEncabezado(doc, orden);
-    dibujarCliente(doc, orden);
-    dibujarEquipo(doc, orden);
+
+    // Cliente + equipo
+    dibujarDatosCliente(doc, orden);
+    dibujarDatosEquipo(doc, orden);
+
+    // Problema
     dibujarProblema(doc, orden);
-    dibujarObservaciones(doc, orden);
-    dibujarFirmas(doc);
+
+    // Texto legal
+    dibujarRecomendaciones(doc);
+
+    // Pie
     dibujarPiePagina(doc);
 
+    // Descargar
     doc.save(`${orden.numeroOrden}.pdf`);
 };
 
+
+/* =====================================================
+   ENCABEZADO
+===================================================== */
+
 const dibujarEncabezado = (doc, orden) => {
 
-    // Marco
-    doc.setDrawColor(180);
-    doc.rect(10, 10, 190, 35);
+    const x = 10;
+    const y = 10;
+    const ancho = 190;
+    const alto = 35;
 
-    // Logo
+    /*
+        Marco principal
+    */
+
+    doc.setDrawColor(...BORDE);
+    doc.setLineWidth(0.35);
+
+    doc.roundedRect(
+        x,
+        y,
+        ancho,
+        alto,
+        3,
+        3
+    );
+
+
+    /*
+        Logo
+    */
+
     doc.addImage(
         logo,
         "PNG",
+        16,
         15,
-        13,
         35,
         20
     );
 
-    // Título
-    doc.setFont("helvetica", "bold");
+
+    /*
+        4TECH
+    */
+
+    doc.setTextColor(...AZUL);
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
+
     doc.setFontSize(18);
 
     doc.text(
-        "ORDEN DE RECEPCIÓN",
-        105,
+        "4TECH",
+        100,
         18,
-        { align: "center" }
+        {
+            align: "center"
+        }
     );
 
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
+
+    /*
+        Subtítulo
+    */
+
+    doc.setTextColor(...TEXTO);
+    doc.setFont(
+        "helvetica",
+        "normal"
+    );
+
+    doc.setFontSize(9);
 
     doc.text(
-        "Servicio Técnico Especializado",
-        105,
+        "Reparación y Soporte Tecnológico",
+        100,
         24,
-        { align: "center" }
+        {
+            align: "center"
+        }
     );
 
-    // Fecha
+
+    /*
+        Título
+    */
+
+    doc.setTextColor(...AZUL);
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
+
+    doc.setFontSize(13);
+
+    doc.text(
+        "ORDEN DE SERVICIO",
+        100,
+        31,
+        {
+            align: "center"
+        }
+    );
+
+
+    /*
+        Información de la orden
+    */
+
     const fecha = orden.createdAt
-        ? new Date(orden.createdAt).toLocaleDateString("es-CO")
-        : new Date().toLocaleDateString("es-CO");
+        ? new Date(orden.createdAt)
+            .toLocaleDateString("es-CO")
+        : new Date()
+            .toLocaleDateString("es-CO");
 
-    doc.setFont("helvetica", "bold");
 
-    doc.text(`Orden: ${orden.numeroOrden}`, 145, 18);
-    doc.text(`Fecha: ${fecha}`, 145, 24);
-    doc.text(`Estado: ${orden.estado}`, 145, 30);
-};
-
-const dibujarCliente = (doc, orden) => {
-
-    const inicioY = 50;
-
-    // Título
-    doc.setFillColor(30, 64, 175);
-    doc.rect(10, inicioY, 190, 8, "F");
-
-    doc.setTextColor(255);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-
-    doc.text("DATOS DEL CLIENTE", 15, inicioY + 5.5);
-
-    // Volver al color negro
-    doc.setTextColor(0);
-
-    // Caja
-    doc.rect(10, inicioY + 8, 190, 30);
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-
-    doc.text("Nombre:", 15, inicioY + 16);
-    doc.text("Teléfono:", 15, inicioY + 24);
-    doc.text("Correo:", 15, inicioY + 32);
-
-    doc.setFont("helvetica", "normal");
-
-    doc.text(orden.cliente?.nombre || "", 45, inicioY + 16);
-    doc.text(orden.cliente?.telefono || "", 45, inicioY + 24);
-    doc.text(orden.cliente?.correo || "", 45, inicioY + 32);
-
-};
-
-const dibujarEquipo = (doc, orden) => {
-
-    const inicioY = 92;
-
-    doc.setFillColor(30, 64, 175);
-    doc.rect(10, inicioY, 190, 8, "F");
-
-    doc.setTextColor(255);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-
-    doc.text("DATOS DEL EQUIPO", 15, inicioY + 5.5);
-
-    doc.setTextColor(0);
-
-    doc.rect(10, inicioY + 8, 190, 48);
-
-    doc.setFont("helvetica", "bold");
-
-    doc.text("Tipo:", 15, inicioY + 16);
-    doc.text("Marca:", 15, inicioY + 24);
-    doc.text("Modelo:", 15, inicioY + 32);
-    doc.text("Serial:", 15, inicioY + 40);
-    doc.text("Contraseña:", 15, inicioY + 48);
-
-    doc.setFont("helvetica", "normal");
-
-    doc.text(orden.tipoEquipo || "", 50, inicioY + 16);
-    doc.text(orden.marca || "", 50, inicioY + 24);
-    doc.text(orden.modelo || "", 50, inicioY + 32);
-    doc.text(orden.serial || "", 50, inicioY + 40);
-    doc.text(orden.passwordEquipo || "", 50, inicioY + 48);
-
-};
-
-const dibujarProblema = (doc, orden) => {
-
-    const inicioY = 152;
-
-    doc.setFillColor(220, 38, 38);
-    doc.rect(10, inicioY, 190, 8, "F");
-
-    doc.setTextColor(255);
-    doc.setFont("helvetica", "bold");
-
-    doc.text("PROBLEMA REPORTADO", 15, inicioY + 5.5);
-
-    doc.setTextColor(0);
-
-    doc.rect(10, inicioY + 8, 190, 22);
-
-    doc.setFont("helvetica", "normal");
-
-    doc.text(
-        orden.problemaReportado || "",
-        15,
-        inicioY + 18
+    doc.setTextColor(...TEXTO);
+    doc.setFont(
+        "helvetica",
+        "normal"
     );
 
-};
-
-const dibujarObservaciones = (doc, orden) => {
-
-    const inicioY = 186;
-
-    doc.setFillColor(22, 163, 74);
-    doc.rect(10, inicioY, 190, 8, "F");
-
-    doc.setTextColor(255);
-    doc.setFont("helvetica", "bold");
-
-    doc.text("OBSERVACIONES", 15, inicioY + 5.5);
-
-    doc.setTextColor(0);
-
-    doc.rect(10, inicioY + 8, 190, 22);
-
-    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
 
     doc.text(
-        orden.observacionesRecepcion || "Sin observaciones",
-        15,
-        inicioY + 18
+        `Orden: ${orden.numeroOrden || ""}`,
+        150,
+        18
     );
 
+    doc.text(
+        `Estado: ${orden.estado || ""}`,
+        150,
+        24
+    );
+
+    doc.text(
+        `Fecha: ${fecha}`,
+        150,
+        30
+    );
 };
 
-const dibujarFirmas = (doc) => {
 
-    const y = 225;
+/* =====================================================
+   DATOS DEL CLIENTE
+===================================================== */
 
-    doc.rect(20, y, 70, 28);
+const dibujarDatosCliente = (doc, orden) => {
 
-    doc.rect(120, y, 70, 28);
+    const x = 10;
+    const y = 52;
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
+    const ancho = 92;
 
-    doc.text("Firma Cliente", 55, y + 33, {
-        align: "center"
-    });
+    const altoTitulo = 8;
 
-    doc.text("Firma Técnico", 155, y + 33, {
-        align: "center"
-    });
+    const altoTabla = 39;
 
+    /*
+        Título
+    */
+
+    dibujarTitulo(
+        doc,
+        x,
+        y,
+        ancho,
+        "DATOS DEL CLIENTE"
+    );
+
+
+    /*
+        Tabla
+    */
+
+    dibujarTabla(
+        doc,
+        x,
+        y + altoTitulo,
+        ancho,
+        altoTabla,
+        [
+            "Nombre",
+            "Teléfono",
+            "Correo"
+        ],
+        [
+            orden.cliente?.nombre || "",
+            orden.cliente?.telefono || "",
+            orden.cliente?.correo || ""
+        ],
+        3,
+        30
+    );
 };
 
-const dibujarPiePagina = (doc) => {
 
-    const altura = doc.internal.pageSize.height;
+/* =====================================================
+   DATOS DEL EQUIPO
+===================================================== */
 
-    doc.setDrawColor(200);
+const dibujarDatosEquipo = (doc, orden) => {
+
+    const x = 108;
+    const y = 52;
+
+    const ancho = 92;
+
+    const altoTitulo = 8;
+
+    const altoTabla = 39;
+
+    /*
+        Título
+    */
+
+    dibujarTitulo(
+        doc,
+        x,
+        y,
+        ancho,
+        "DATOS DEL EQUIPO"
+    );
+
+
+    /*
+        Tabla
+    */
+
+    dibujarTabla(
+        doc,
+        x,
+        y + altoTitulo,
+        ancho,
+        altoTabla,
+        [
+            "Tipo",
+            "Marca",
+            "Modelo",
+            "Serial"
+        ],
+        [
+            orden.tipoEquipo || "",
+            orden.marca || "",
+            orden.modelo || "",
+            orden.serial || ""
+        ],
+        4,
+        30
+    );
+};
+
+
+/* =====================================================
+   TABLA INTERNA
+===================================================== */
+
+const dibujarTabla = (
+    doc,
+    x,
+    y,
+    ancho,
+    alto,
+    etiquetas,
+    valores,
+    cantidadFilas,
+    anchoEtiqueta
+) => {
+
+    const altoFila =
+        alto / cantidadFilas;
+
+
+    /*
+        Fondo de la columna de etiquetas
+    */
+
+    doc.setFillColor(
+        ...FONDO_ETIQUETA
+    );
+
+    doc.rect(
+        x,
+        y,
+        anchoEtiqueta,
+        alto,
+        "F"
+    );
+
+
+    /*
+        Borde exterior
+    */
+
+    doc.setDrawColor(
+        ...BORDE
+    );
+
+    doc.setLineWidth(0.3);
+
+    doc.rect(
+        x,
+        y,
+        ancho,
+        alto
+    );
+
+
+    /*
+        Línea vertical
+    */
+
+    doc.line(
+        x + anchoEtiqueta,
+        y,
+        x + anchoEtiqueta,
+        y + alto
+    );
+
+
+    /*
+        Líneas horizontales
+    */
+
+    for (
+        let i = 1;
+        i < cantidadFilas;
+        i++
+    ) {
+
+        const posicionY =
+            y + altoFila * i;
+
+        doc.line(
+            x,
+            posicionY,
+            x + ancho,
+            posicionY
+        );
+    }
+
+
+    /*
+        Texto
+    */
+
+    doc.setFontSize(8.5);
+
+
+    for (
+        let i = 0;
+        i < cantidadFilas;
+        i++
+    ) {
+
+        const posicionY =
+            y +
+            altoFila * i +
+            altoFila / 2 +
+            3;
+
+
+        /*
+            Etiqueta
+        */
+
+        doc.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        doc.setTextColor(
+            ...TEXTO
+        );
+
+        doc.text(
+            etiquetas[i],
+            x + 5,
+            posicionY
+        );
+
+
+        /*
+            Valor
+        */
+
+        doc.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        doc.setTextColor(
+            ...TEXTO_SUAVE
+        );
+
+
+        /*
+            Permitimos que textos largos
+            se ajusten dentro de la celda.
+        */
+
+        const textoValor =
+            doc.splitTextToSize(
+                valores[i],
+                ancho - anchoEtiqueta - 8
+            );
+
+
+        doc.text(
+            textoValor,
+            x + anchoEtiqueta + 4,
+            posicionY
+        );
+    }
+};
+
+
+/* =====================================================
+   PROBLEMA REPORTADO
+===================================================== */
+
+const dibujarProblema = (
+    doc,
+    orden
+) => {
+
+    const x = 10;
+
+    const y = 105;
+
+    const ancho = 190;
+
+    const altoTitulo = 8;
+
+    const altoCaja = 35;
+
+
+    /*
+        Título
+    */
+
+    dibujarTitulo(
+        doc,
+        x,
+        y,
+        ancho,
+        "PROBLEMA REPORTADO"
+    );
+
+
+    /*
+        Caja
+    */
+
+    dibujarCajaSuave(
+        doc,
+        x,
+        y + altoTitulo,
+        ancho,
+        altoCaja
+    );
+
+
+    /*
+        Texto
+    */
+
+    doc.setFont(
+        "helvetica",
+        "normal"
+    );
+
+    doc.setFontSize(8.5);
+
+    doc.setTextColor(
+        ...TEXTO_SUAVE
+    );
+
+
+    const problema =
+        doc.splitTextToSize(
+            orden.problemaReportado ||
+            "Sin información.",
+            ancho - 12
+        );
+
+
+    doc.text(
+        problema,
+        x + 6,
+        y + 18,
+        {
+            lineHeightFactor: 1.5
+        }
+    );
+};
+
+
+/* =====================================================
+   RECOMENDACIONES
+===================================================== */
+
+const dibujarRecomendaciones = (
+    doc
+) => {
+
+    const x = 10;
+
+    const y = 150;
+
+    const ancho = 190;
+
+    const altoTitulo = 8;
+
+    const altoCaja = 70;
+
+
+    /*
+        Título
+    */
+
+    dibujarTitulo(
+        doc,
+        x,
+        y,
+        ancho,
+        "RECOMENDACIONES PARA INGRESOS"
+    );
+
+
+    /*
+        Caja
+    */
+
+    dibujarCajaSuave(
+        doc,
+        x,
+        y + altoTitulo,
+        ancho,
+        altoCaja
+    );
+
+
+    /*
+        Texto legal
+    */
+
+    doc.setFont(
+        "helvetica",
+        "normal"
+    );
+
+    doc.setFontSize(8);
+
+    doc.setTextColor(
+        ...TEXTO_SUAVE
+    );
+
+
+    const texto =
+        doc.splitTextToSize(
+            TEXTO_INGRESO,
+            ancho - 12
+        );
+
+
+    doc.text(
+        texto,
+        x + 6,
+        y + 17,
+        {
+            lineHeightFactor: 1.5
+        }
+    );
+};
+
+
+/* =====================================================
+   TÍTULO AZUL
+===================================================== */
+
+const dibujarTitulo = (
+    doc,
+    x,
+    y,
+    ancho,
+    titulo
+) => {
+
+    doc.setFillColor(
+        ...AZUL
+    );
+
+
+    doc.roundedRect(
+        x,
+        y,
+        ancho,
+        8,
+        2,
+        2,
+        "F"
+    );
+
+
+    doc.setTextColor(
+        255,
+        255,
+        255
+    );
+
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
+
+    doc.setFontSize(8.5);
+
+
+    doc.text(
+        titulo,
+        x + 5,
+        y + 5.5
+    );
+};
+
+
+/* =====================================================
+   CAJA SUAVE
+===================================================== */
+
+const dibujarCajaSuave = (
+    doc,
+    x,
+    y,
+    ancho,
+    alto
+) => {
+
+    doc.setDrawColor(
+        ...BORDE
+    );
+
+    doc.setLineWidth(
+        0.3
+    );
+
+
+    doc.roundedRect(
+        x,
+        y,
+        ancho,
+        alto,
+        1.5,
+        1.5
+    );
+};
+
+
+/* =====================================================
+   PIE DE PÁGINA
+===================================================== */
+
+const dibujarPiePagina = (
+    doc
+) => {
+
+    const altura =
+        doc.internal.pageSize.height;
+
+
+    /*
+        Línea superior
+    */
+
+    doc.setDrawColor(
+        ...BORDE
+    );
+
+    doc.setLineWidth(
+        0.3
+    );
 
     doc.line(
         10,
@@ -228,18 +759,34 @@ const dibujarPiePagina = (doc) => {
         altura - 22
     );
 
+
+    /*
+        Texto
+    */
+
+    doc.setTextColor(
+        120,
+        120,
+        120
+    );
+
+    doc.setFont(
+        "helvetica",
+        "normal"
+    );
+
     doc.setFontSize(8);
 
-    doc.setTextColor(120);
 
     doc.text(
-        "Gracias por confiar en TECH",
+        "Gracias por confiar en 4Tech",
         105,
         altura - 16,
         {
             align: "center"
         }
     );
+
 
     doc.text(
         "Servicio Técnico Especializado",
@@ -250,13 +797,14 @@ const dibujarPiePagina = (doc) => {
         }
     );
 
+
     doc.text(
-        "Conserve esta orden para reclamar su equipo.",
+        "Conserve este documento para reclamar su equipo.",
         105,
         altura - 8,
         {
             align: "center"
         }
     );
-
 };
+
