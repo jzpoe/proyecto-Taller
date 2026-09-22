@@ -26,21 +26,23 @@ export const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
-            const response = await inicioSesion(login)
+            const response = await inicioSesion(login);
 
             iniciarSesionContext(response);
-            
-            
 
-            toast.success('Bienvenido');
+            toast.success("Bienvenido");
             navigate("/");
 
         } catch (error) {
-            toast.error(error.response.data.message);
+            toast.error(
+                error.response?.data?.message ||
+                "Usuario o contraseña incorrectos."
+            );
 
         }
-    }
+    };
 
     return (
         <div className="min-h-screen bg-slate-100 flex items-center justify-center p-8">

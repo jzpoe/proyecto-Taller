@@ -462,11 +462,11 @@ export const dibujarSolucionResumen = (
                     ).toLocaleString("es-CO")}`
                 ],
 
-                [
-                    "Garantía",
-                    orden.garantia ||
-                    "Sin garantía"
-                ],
+                // [
+                //     "Garantía",
+                //     orden.garantia ||
+                //     "Sin garantía"
+                // ],
 
                 [
                     "Estado",

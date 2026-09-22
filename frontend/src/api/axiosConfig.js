@@ -23,26 +23,17 @@ api.interceptors.request.use((config) => {
 export default api;
 
 api.interceptors.response.use(
-
-    (response) => {
-
-        return response;
-
-    },
-
+    (response) => response,
     (error) => {
-
-        if (error.response?.status === 401) {
-
+        if (
+            error.response?.status === 401 &&
+            !error.config?.url?.includes("/login")
+        ) {
             localStorage.removeItem("token");
             localStorage.removeItem("usuario");
-
             window.location.href = "/login";
-
         }
 
         return Promise.reject(error);
-
     }
-
 );
