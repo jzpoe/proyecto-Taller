@@ -9,7 +9,6 @@ import { ProblemaDetalles } from "../../components/detalleOrden/ProblemaDetalles
 import { FotografiaDetalles } from "../../components/detalleOrden/FotografiaDetalles";
 import { ProcesoReparacionCard } from "../../components/detalleOrden/ProcesoReparacionCard";
 import toast from "react-hot-toast";
-import { generarOrdenPDF } from "../../utils/generarOrdenPDF";
 import { generarOrdenServicioPDF } from "../../utils/generarOrdenServicioPDF";
 
 
