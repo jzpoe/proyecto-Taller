@@ -94,24 +94,24 @@ export const dibujarEncabezado = (doc, orden, y) => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
 
-    doc.text(
-        "4TECH",
-        105,
-        y + 8,
-        { align: "center" }
-    );
+    // doc.text(
+    //     "4TECH",
+    //     105,
+    //     y + 8,
+    //     { align: "center" }
+    // );
 
     // Descripción
     doc.setTextColor(...GRIS_TEXTO);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
 
-    doc.text(
-        "Reparación y Soporte Tecnológico",
-        105,
-        y + 14,
-        { align: "center" }
-    );
+    // doc.text(
+    //     "Reparación y Soporte Tecnológico",
+    //     105,
+    //     y + 14,
+    //     { align: "center" }
+    // );
 
     // Título
     doc.setTextColor(...AZUL_OSCURO);
@@ -119,7 +119,7 @@ export const dibujarEncabezado = (doc, orden, y) => {
     doc.setFontSize(14);
 
     doc.text(
-        "ORDEN DE SERVICIO",
+        "FORMATO DE SALIDA",
         105,
         y + 23,
         { align: "center" }
@@ -614,7 +614,7 @@ export const dibujarPiePagina = (doc) => {
     doc.setFontSize(7.5);
 
     doc.text(
-        "Gracias por confiar en 4Tech",
+        "Avenida 5 N° 23DN - 68, Barrio: San Vicente  Centro Comercial La Pasarela  Local 2-53, Cali - Valle",
         105,
         altura - 12,
         {
@@ -623,11 +623,13 @@ export const dibujarPiePagina = (doc) => {
     );
 
     doc.text(
-        "Conserve este documento para efectos de garantía.",
+        "Teléfono:3175684157  Email: 4tech.saje@gmail.com",
         105,
         altura - 7,
         {
             align: "center"
         }
     );
+
+    
 };

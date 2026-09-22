@@ -119,14 +119,14 @@ const dibujarEncabezado = (doc, orden) => {
 
     doc.setFontSize(18);
 
-    doc.text(
-        "4TECH",
-        100,
-        18,
-        {
-            align: "center"
-        }
-    );
+    // doc.text(
+    //     "4TECH",
+    //     100,
+    //     18,
+    //     {
+    //         align: "center"
+    //     }
+    // );
 
 
     /*
@@ -141,14 +141,14 @@ const dibujarEncabezado = (doc, orden) => {
 
     doc.setFontSize(9);
 
-    doc.text(
-        "Reparación y Soporte Tecnológico",
-        100,
-        24,
-        {
-            align: "center"
-        }
-    );
+    // doc.text(
+    //     "Reparación y Soporte Tecnológico",
+    //     100,
+    //     24,
+    //     {
+    //         align: "center"
+    //     }
+    // );
 
 
     /*
@@ -164,7 +164,7 @@ const dibujarEncabezado = (doc, orden) => {
     doc.setFontSize(13);
 
     doc.text(
-        "ORDEN DE SERVICIO",
+        "FORMATO DE INGRESO",
         100,
         31,
         {
@@ -778,18 +778,8 @@ const dibujarPiePagina = (
     doc.setFontSize(8);
 
 
-    doc.text(
-        "Gracias por confiar en 4Tech",
-        105,
-        altura - 16,
-        {
-            align: "center"
-        }
-    );
-
-
-    doc.text(
-        "Servicio Técnico Especializado",
+     doc.text(
+        "Avenida 5 N° 23DN - 68, Barrio: San Vicente  Centro Comercial La Pasarela  Local 2-53, Cali - Valle",
         105,
         altura - 12,
         {
@@ -797,11 +787,10 @@ const dibujarPiePagina = (
         }
     );
 
-
     doc.text(
-        "Conserve este documento para reclamar su equipo.",
+        "Teléfono:3175684157  Email: 4tech.saje@gmail.com",
         105,
-        altura - 8,
+        altura - 7,
         {
             align: "center"
         }
