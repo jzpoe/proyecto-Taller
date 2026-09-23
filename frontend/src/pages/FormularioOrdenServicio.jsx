@@ -195,7 +195,7 @@ export const FormularioOrdenServicio = ({ onCrearOrden }) => {
 
                 <TextareaEquipos
                     className="col-span-2"
-                    label="Observaciones de Recepción"
+                    label="Estado Físico Del Equipo"
                     name="observacionesRecepcion"
                     value={orden.observacionesRecepcion}
                     onChange={handleChange}

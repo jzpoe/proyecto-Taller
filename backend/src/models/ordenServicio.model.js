@@ -9,9 +9,9 @@ const ordenServicioSchema = new mongoose.Schema(
 
 
     cliente: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Cliente",
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cliente",
+      required: true,
     },
 
     tecnicoAsignado: {
@@ -84,6 +84,14 @@ const ordenServicioSchema = new mongoose.Schema(
     observacionesEntrega: {
       type: String,
       default: "",
+    },
+    observacionesRecepcion: {
+      type: String,
+      default: ""
+    },
+    accesorios: {
+      type: String,
+      default: ""
     },
 
     fechaEntrega: {
