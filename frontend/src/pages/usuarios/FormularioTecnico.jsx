@@ -75,91 +75,99 @@ export const FormularioTecnico = ({ onTecnicoCreado }) => {
 
     };
 
-    
+
 
     return (
 
         <form
             onSubmit={handleSubmit}
-            className="space-y-5"
+            className="space-y-5 inset-0 z-50 flex items-center justify-center  bg-white backdrop-blur-sm p-4"
         >
 
-            <div>
+            <div className="w-full max-w-md bg-white/50 rounded-2xl shadow-2xl overflow-hidden p-4">
 
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre
-                </label>
-
-                <input
-                    type="text"
-                    name="nombre"
-                    value={formulario.nombre}
-                    onChange={handleChange}
-                    placeholder="Nombre completo"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-
-            </div>
-
-            <div>
-
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Usuario
-                </label>
-
-                <input
-                    type="text"
-                    name="usuario"
-                    value={formulario.usuario}
-                    onChange={handleChange}
-                    placeholder="Ej: santiago-tec"
-                    autoComplete="off"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-
-            </div>
-
-            <div>
-
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Contraseña
-                </label>
-
-                <input
-                    type="password"
-                    name="contrasena"
-                    value={formulario.contrasena}
-                    onChange={handleChange}
-                    placeholder="Contraseña"
-                    autoComplete="new-password"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
 
                 
 
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre
+                    </label>
+
+                    <input
+                        type="text"
+                        name="nombre"
+                        value={formulario.nombre}
+                        onChange={handleChange}
+                        placeholder="Nombre completo"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                
+
+                
+
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Usuario
+                    </label>
+
+                    <input
+                        type="text"
+                        name="usuario"
+                        value={formulario.usuario}
+                        onChange={handleChange}
+                        placeholder="Ej: santiago-tec"
+                        autoComplete="off"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                
+
+                
+
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        name="contrasena"
+                        value={formulario.contrasena}
+                        onChange={handleChange}
+                        placeholder="Contraseña"
+                        autoComplete="new-password"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+
+
+        
+
+                <div className="flex justify-end pt-2">
+
+                    <button
+                        type="submit"
+                        disabled={cargando}
+                        className="
+                            px-5 py-2.5
+                            rounded-lg
+                            bg-blue-700
+                            text-white
+                            text-sm font-semibold
+                            hover:bg-blue-800
+                            transition
+                            shadow-sm
+                        "
+                    >
+
+                        {cargando
+                            ? "Creando..."
+                            : "Crear Técnico"
+                        }
+
+                    </button>
+
+                </div>
             </div>
-
-            
-
-            
-
-            <div className="flex justify-end pt-2">
-
-                <button
-                    type="submit"
-                    disabled={cargando}
-                    className="bg-blue-700 hover:bg-blue-800 disabled:bg-gray-400 text-white px-5 py-2 rounded-lg shadow transition"
-                >
-
-                    {cargando
-                        ? "Creando..."
-                        : "Crear Técnico"
-                    }
-
-                </button>
-
-            </div>
-
         </form>
 
     );

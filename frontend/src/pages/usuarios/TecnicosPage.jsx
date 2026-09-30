@@ -175,13 +175,13 @@ export const TecnicosPage = () => {
                                             <button
                                                 onClick={() => eliminarTecnico(tecnico._id)}
                                                 className="
-            p-2
-            rounded-lg
-            text-red-600
-            hover:bg-red-50
-            hover:text-red-700
-            transition
-        "
+                                                    p-2
+                                                    rounded-lg
+                                                    text-red-600
+                                                    hover:bg-red-50
+                                                    hover:text-red-700
+                                                    transition
+                                                "
                                                 title="Eliminar técnico"
                                             >
                                                 <Trash2 size={18} />
