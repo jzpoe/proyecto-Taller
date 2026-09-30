@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { Menu, X, } from "lucide-react";
+import { LockKeyhole, Menu, X, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LogOut, UserCircle2 } from "lucide-react";
 import logo from "../assets/logo.png";
 import { useAuth } from "../hooks/useAuth";
+import ModalCambiarContrasena from "../components/ui/ModalCambiarContrasena";
 
 
 
 export const MainLayout = () => {
     const [menuAbierto, setMenuAbierto] = useState(false);
+    const [modalContrasena, setModalContrasena] = useState(false);
+
     const navigate = useNavigate();
     const { usuario, logout } = useAuth();
     const { login: cerrarSesionContext } = useAuth();
@@ -177,16 +180,18 @@ export const MainLayout = () => {
 
                     </div>
 
-                    <div className="flex items-center gap-4 bg-gray-50 rounded-xl px-4 py-2 border border-gray-200">
+
+                    <div className="flex items-center gap-5 bg-gray-50 rounded-xl px-4 py-2.5 border border-gray-200">
+
+                        {/* Información del usuario */}
                         <div className="flex items-center gap-3">
 
                             <UserCircle2
-                                size={44}
+                                size={42}
                                 className="text-blue-700"
                             />
 
                             <div>
-
                                 <p className="font-semibold text-gray-800">
                                     {usuario?.nombre}
                                 </p>
@@ -194,27 +199,49 @@ export const MainLayout = () => {
                                 <p className="text-xs uppercase tracking-wide text-blue-600 font-semibold">
                                     {usuario?.rol}
                                 </p>
-
                             </div>
 
                         </div>
 
+                        {/* Cambiar contraseña */}
                         <button
-
-                            onClick={cerrarSesion}
-
+                            onClick={() => setModalContrasena(true)}
                             className="
-                                flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-3
-                                rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+            flex items-center gap-2
+            px-3 py-2
+            rounded-lg
+            text-sm font-medium
+            text-gray-600
+            hover:text-blue-700
+            hover:bg-blue-50
+            transition
+        "
                         >
+                            <LockKeyhole size={17} />
+                            Cambiar contraseña
+                        </button>
 
+                        {/* Cerrar sesión */}
+                        <button
+                            onClick={cerrarSesion}
+                            className="
+            flex items-center gap-2
+            bg-red-600
+            hover:bg-red-700
+            text-white
+            px-4 py-2.5
+            rounded-xl
+            shadow-sm
+            transition-all
+        "
+                        >
                             <LogOut size={18} />
-
                             Salir
-
                         </button>
 
                     </div>
+
+
 
                 </header>
 
@@ -225,6 +252,12 @@ export const MainLayout = () => {
                 </div>
 
             </main>
+
+            {modalContrasena && (
+                <ModalCambiarContrasena
+                    cerrarModal={() => setModalContrasena(false)}
+                />
+            )}
 
         </div>
 

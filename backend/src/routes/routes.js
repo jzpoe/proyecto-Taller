@@ -14,6 +14,7 @@ import { obtenerTecnicos } from '../controllers/auth/usuarios.controller.js';
 import { asignarTecnico } from '../controllers/asignarTenico.js';
 import { obtenerMisOrdenes } from '../controllers/obtenerOrdenes.js';
 import { crearTecnico } from '../controllers/auth/crearTecnico.js';
+import { cambiarContrasena } from '../controllers/auth/cambiar.contrasena.js';
 
 const router = express.Router();
 
@@ -51,6 +52,9 @@ router.delete("/ordenServicio/:id", verificarToken,verificarAdministrador, elimi
 
 router.post("/registrar", register);
 router.post("/login", login)
+
+//cambiar contraseña
+router.put("/cambiar-contrasena", verificarToken, cambiarContrasena)
 
 router.get("/usuarios/tecnicos", verificarToken, verificarAdministrador, obtenerTecnicos)
 router.post( "/usuarios/tecnicos", verificarToken, verificarAdministrador, crearTecnico);
