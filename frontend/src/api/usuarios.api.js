@@ -54,3 +54,11 @@ export const crearTecnico = async (datos) => {
 
 };
 
+export const eliminarTecnicos = async (id)=>{
+    const response = await api.delete(
+        `/usuario/eliminar/${id}`
+    )
+
+    return response.data
+}
+

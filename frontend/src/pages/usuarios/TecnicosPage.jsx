@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { UserPlus, Users } from "lucide-react";
+import { Trash2, UserPlus, Users } from "lucide-react";
 import toast from "react-hot-toast";
 
-import { obtenerTecnicos } from "../../api/usuarios.api";
+import { eliminarTecnicos, obtenerTecnicos } from "../../api/usuarios.api";
 import { Modal } from "../../components/ui/Modal";
 import { FormularioTecnico } from "./FormularioTecnico";
 
@@ -10,6 +10,8 @@ export const TecnicosPage = () => {
 
     const [tecnicos, setTecnicos] = useState([]);
     const [modalAbierto, setModalAbierto] = useState(false);
+
+    console.log(tecnicos)
 
     const cargarTecnicos = async () => {
 
@@ -31,6 +33,28 @@ export const TecnicosPage = () => {
         }
 
     };
+
+
+    const eliminarTecnico = async (id) => {
+        try {
+            const response = await eliminarTecnicos(id)
+
+            toast.success(
+                response.message || "Técnico eliminado correctamente."
+            );
+
+            cargarTecnicos()
+
+        } catch (error) {
+            console.error("Error al cargar técnicos:", error);
+
+            toast.error(
+                error.response?.data?.message ||
+                "No se pudieron cargar los técnicos."
+            );
+        }
+    }
+
 
     useEffect(() => {
 
@@ -113,6 +137,10 @@ export const TecnicosPage = () => {
                                 </th>
 
                                 <th className="px-4 py-3 text-left">
+                                    Acción
+                                </th>
+
+                                <th className="px-4 py-3 text-left">
                                     Estado
                                 </th>
 
@@ -141,6 +169,23 @@ export const TecnicosPage = () => {
 
                                         <td className="px-4 py-3">
                                             {tecnico.rol}
+                                        </td>
+
+                                        <td className="px-4 py-3">
+                                            <button
+                                                onClick={() => eliminarTecnico(tecnico._id)}
+                                                className="
+            p-2
+            rounded-lg
+            text-red-600
+            hover:bg-red-50
+            hover:text-red-700
+            transition
+        "
+                                                title="Eliminar técnico"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
                                         </td>
 
                                         <td className="px-4 py-3">
