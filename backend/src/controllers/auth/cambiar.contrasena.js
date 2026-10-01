@@ -21,7 +21,7 @@ export const cambiarContrasena = async (req, res) => {
 
         const validar_contraseña = await bcrypt.compare(contrasenaActual, validar_usuario.contrasena);
 
-        console.log("validar contraseña ", validar_contraseña)
+        
         if (!validar_contraseña) {
             return res.status(401).json({
                 ok: false,

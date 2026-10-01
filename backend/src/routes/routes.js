@@ -10,7 +10,7 @@ import { register } from '../controllers/auth/register.js';
 import { login } from '../controllers/auth/login.js';
 import { actualizarCliente } from '../controllers/actualizarCliente.js';
 import { verificarAdministrador, verificarToken } from '../controllers/middleware/authMiddleware.js';
-import { eliminarTecnico, obtenerTecnicos } from '../controllers/usuarios.controller.js';
+import { editarTecnico, eliminarTecnico, obtenerTecnicos } from '../controllers/usuarios.controller.js';
 import { asignarTecnico } from '../controllers/asignarTenico.js';
 import { obtenerMisOrdenes } from '../controllers/obtenerOrdenes.js';
 import { crearTecnico } from '../controllers/auth/crearTecnico.js';
@@ -59,7 +59,8 @@ router.put("/cambiar-contrasena", verificarToken, cambiarContrasena)
 //tecnicos
 router.get("/usuarios/tecnicos", verificarToken, verificarAdministrador, obtenerTecnicos)
 router.post( "/usuarios/tecnicos", verificarToken, verificarAdministrador, crearTecnico);
-router.delete("/usuario/eliminar/:id", eliminarTecnico);
+router.delete("/usuario/eliminar/:id", verificarToken, verificarAdministrador, eliminarTecnico);
+router.patch("/usuario/actualizar/:id", verificarToken, verificarAdministrador, editarTecnico);
 
 
 router.put("/ordenServicio/:id/asignar-tecnico", verificarToken, asignarTecnico);

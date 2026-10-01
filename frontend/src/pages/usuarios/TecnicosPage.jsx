@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
-import { Trash2, UserPlus, Users } from "lucide-react";
+import { Pencil, Trash2, UserPlus, Users } from "lucide-react";
+import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 
-import { eliminarTecnicos, obtenerTecnicos } from "../../api/usuarios.api";
+import { editarTenicos, eliminarTecnicos, obtenerTecnicos } from "../../api/usuarios.api";
 import { Modal } from "../../components/ui/Modal";
 import { FormularioTecnico } from "./FormularioTecnico";
+import { EditarTecnico } from "./EditarTecnico";
 
 export const TecnicosPage = () => {
 
     const [tecnicos, setTecnicos] = useState([]);
     const [modalAbierto, setModalAbierto] = useState(false);
+     const [tecnicoSeleccionado, setTecnicoSeleccionado] = useState(null);
+    const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+   
 
-    console.log(tecnicos)
+
 
     const cargarTecnicos = async () => {
 
@@ -36,24 +41,51 @@ export const TecnicosPage = () => {
 
 
     const eliminarTecnico = async (id) => {
+
+        const resultado = await Swal.fire({
+            title: "¿Eliminar técnico?",
+            text: "Esta acción eliminará al técnico del sistema.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#dc2626",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+            reverseButtons: true,
+        });
+
+        if (!resultado.isConfirmed) {
+            return;
+        }
+
         try {
-            const response = await eliminarTecnicos(id)
+            const response = await eliminarTecnicos(id);
 
-            toast.success(
-                response.message || "Técnico eliminado correctamente."
-            );
+            await Swal.fire({
+                title: "¡Eliminado!",
+                text: response.message || "Técnico eliminado correctamente.",
+                icon: "success",
+                confirmButtonColor: "#1e40af",
+            });
 
-            cargarTecnicos()
+            cargarTecnicos();
 
         } catch (error) {
-            console.error("Error al cargar técnicos:", error);
+            console.error("Error al eliminar técnico:", error);
 
-            toast.error(
-                error.response?.data?.message ||
-                "No se pudieron cargar los técnicos."
-            );
+            Swal.fire({
+                title: "Error",
+                text:
+                    error.response?.data?.message ||
+                    "No se pudo eliminar el técnico.",
+                icon: "error",
+                confirmButtonColor: "#1e40af",
+            });
         }
-    }
+    };
+
+
+    
 
 
     useEffect(() => {
@@ -77,6 +109,22 @@ export const TecnicosPage = () => {
         cerrarModal();
 
     };
+
+    const tecnicoEditado = async () => {
+    await cargarTecnicos();
+    cerrarModalEditar();
+};
+
+    const abrirModalEditar = (tecnico) => {
+        setTecnicoSeleccionado(tecnico);
+        setModalEditarAbierto(true);
+    };
+
+    const cerrarModalEditar = () => {
+        setModalEditarAbierto(false);
+        setTecnicoSeleccionado(null);
+    };
+
 
     return (
 
@@ -170,11 +218,29 @@ export const TecnicosPage = () => {
                                         <td className="px-4 py-3">
                                             {tecnico.rol}
                                         </td>
+                                        <div>
 
-                                        <td className="px-4 py-3">
-                                            <button
-                                                onClick={() => eliminarTecnico(tecnico._id)}
-                                                className="
+                                            <td className="px-4 py-3">
+                                                <button
+                                                    onClick={() => abrirModalEditar(tecnico)}
+                                                    className="
+                                                    p-2
+                                                    rounded-lg
+                                                    text-blue-600
+                                                    hover:bg-red-50
+                                                    hover:blue-red-700
+                                                    transition
+                                                "
+                                                    title="Eliminar técnico"
+                                                >
+                                                    <Pencil size={18} />
+                                                </button>
+                                            </td>
+
+                                            <td className="px-4 py-3">
+                                                <button
+                                                    onClick={() => eliminarTecnico(tecnico._id)}
+                                                    className="
                                                     p-2
                                                     rounded-lg
                                                     text-red-600
@@ -182,11 +248,12 @@ export const TecnicosPage = () => {
                                                     hover:text-red-700
                                                     transition
                                                 "
-                                                title="Eliminar técnico"
-                                            >
-                                                <Trash2 size={18} />
-                                            </button>
-                                        </td>
+                                                    title="Eliminar técnico"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </td>
+                                        </div>
 
                                         <td className="px-4 py-3">
 
@@ -251,10 +318,27 @@ export const TecnicosPage = () => {
                 title="Nuevo Técnico"
             >
 
+
                 <FormularioTecnico
                     onTecnicoCreado={tecnicoCreado}
                 />
 
+
+
+            </Modal>
+
+            <Modal
+                size="md"
+                isOpen={modalEditarAbierto}
+                onClose={cerrarModalEditar}
+                title="Editar Técnico"
+            >
+                {tecnicoSeleccionado && (
+                    <EditarTecnico
+                        tecnico={tecnicoSeleccionado}
+                        onTecnicoEditado={tecnicoEditado}
+                    />
+                )}
             </Modal>
 
         </div>

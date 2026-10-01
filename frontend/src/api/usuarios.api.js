@@ -60,5 +60,13 @@ export const eliminarTecnicos = async (id)=>{
     )
 
     return response.data
-}
+};
+
+export const editarTenicos =async (id, datos)=>{
+    const response = await api.patch(
+        `/usuario/actualizar/${id}`,
+        datos
+    )
+    return response.data
+};
 
