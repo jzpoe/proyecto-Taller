@@ -79,6 +79,10 @@ export const MainLayout = () => {
                             Órdenes de Servicio
                         </NavLink>
 
+                         <NavLink to="/inventario" className={linkClass}>
+                            Inventario
+                        </NavLink>
+
 
 
                         {usuario?.rol === "Administrador" && (

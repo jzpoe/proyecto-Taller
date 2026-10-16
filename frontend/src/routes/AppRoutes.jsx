@@ -12,6 +12,7 @@ import { useAuth } from '../hooks/useAuth'
 import { TecnicoDashboard } from '../pages/TecnicoDashboard'
 import { TecnicosPage } from '../pages/usuarios/TecnicosPage'
 import { VentasPage } from '../pages/ventas/VentasPage'
+import { Inventario } from '../pages/inventario/Inventario'
 
 
 const DashboardPorRol = () => {
@@ -75,6 +76,11 @@ export const AppRoutes = () => {
                     <Route
                         path="/clientes"
                         element={<ClientesPage />}
+                    />
+
+                     <Route
+                        path="/inventario"
+                        element={<Inventario />}
                     />
 
                     <Route
