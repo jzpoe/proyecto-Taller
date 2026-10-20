@@ -15,6 +15,9 @@ import { asignarTecnico } from '../controllers/asignarTenico.js';
 import { obtenerMisOrdenes } from '../controllers/obtenerOrdenes.js';
 import { crearTecnico } from '../controllers/auth/crearTecnico.js';
 import { cambiarContrasena } from '../controllers/auth/cambiar.contrasena.js';
+import { inventario } from '../controllers/inventario/inventario.controller.js';
+import { obtener_inventario } from '../controllers/inventario/obtener_inventario.controller.js';
+import { inventario_id } from '../controllers/inventario/obtener_inventario_id.controller.js';
 
 const router = express.Router();
 
@@ -66,6 +69,12 @@ router.patch("/usuario/actualizar/:id", verificarToken, verificarAdministrador, 
 router.put("/ordenServicio/:id/asignar-tecnico", verificarToken, asignarTecnico);
 
 router.put("/ordenServicio/:id", verificarToken, actualizarOrdenServicio);
+
+
+//inventario
+router.post("/inventario", inventario);
+router.get("/inventario", obtener_inventario);
+router.put("/inventario/:id", inventario_id)
 
 
 export default router;

@@ -12,7 +12,9 @@ import { useAuth } from '../hooks/useAuth'
 import { TecnicoDashboard } from '../pages/TecnicoDashboard'
 import { TecnicosPage } from '../pages/usuarios/TecnicosPage'
 import { VentasPage } from '../pages/ventas/VentasPage'
-import { Inventario } from '../pages/inventario/Inventario'
+import {InventarioPage} from '../pages/inventario/Inventario'
+import { ObtenerInventario } from '../pages/inventario/ObtenerInventario'
+
 
 
 const DashboardPorRol = () => {
@@ -78,9 +80,10 @@ export const AppRoutes = () => {
                         element={<ClientesPage />}
                     />
 
+                     
                      <Route
                         path="/inventario"
-                        element={<Inventario />}
+                        element={<ObtenerInventario />}
                     />
 
                     <Route

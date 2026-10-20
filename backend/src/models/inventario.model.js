@@ -27,6 +27,12 @@ const inventarioSchema = new mongoose.Schema({
                 required: true,
                 min: 0,
                 default: 0
+            },
+            precio:{
+               type: Number,
+                required: true,
+                min: 0,
+                default: 0 
             }
         }
     ]
