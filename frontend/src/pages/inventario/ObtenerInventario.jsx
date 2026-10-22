@@ -17,10 +17,16 @@ export const ObtenerInventario = () => {
         setModalAgregarInventario(false);
     };
 
+
     const funcionObtenerProductos = async () => {
         try {
+
             const response = await obtenerInventario();
-            setProductosInventario(response);
+
+            
+            setProductosInventario(
+                Array.isArray(response) ? response : []
+            );
         } catch (error) {
             console.error(
                 "Error al obtener el inventario:",
@@ -28,6 +34,8 @@ export const ObtenerInventario = () => {
             );
         }
     };
+
+
 
     useEffect(() => {
         funcionObtenerProductos();
@@ -164,7 +172,7 @@ export const ObtenerInventario = () => {
                                                     </p>
 
                                                     <p className="mt-1 font-semibold text-slate-800">
-                                                        {variante.stock - (cantidadesSeleccionadas[variante._id]|| 0)} unidades
+                                                        {variante.stock - (cantidadesSeleccionadas[variante._id] || 0)} unidades
                                                     </p>
                                                 </div>
 
