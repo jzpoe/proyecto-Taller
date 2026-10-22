@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { obtenerInventario } from "../../api/inventario";
-import { Plus, Package, HardDrive, Layers } from "lucide-react";
+import { Plus, Package, HardDrive, Layers, Minus } from "lucide-react";
 import { Modal } from "../../components/ui/Modal";
 import { InventarioPage } from "./Inventario";
 
 export const ObtenerInventario = () => {
     const [productosInventario, setProductosInventario] = useState([]);
     const [modalAgregarInventario, setModalAgregarInventario] = useState(false);
+    const [cantidadesSeleccionadas, setCantidadesSeleccionadas] = useState({});
 
     const abrirModal = () => {
         setModalAgregarInventario(true);
@@ -153,6 +154,7 @@ export const ObtenerInventario = () => {
                                                         {nombre}: {valor}
                                                     </span>
                                                 ))}
+
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-3">
@@ -162,7 +164,7 @@ export const ObtenerInventario = () => {
                                                     </p>
 
                                                     <p className="mt-1 font-semibold text-slate-800">
-                                                        {variante.stock} unidades
+                                                        {variante.stock - (cantidadesSeleccionadas[variante._id]|| 0)} unidades
                                                     </p>
                                                 </div>
 
@@ -183,6 +185,57 @@ export const ObtenerInventario = () => {
                                                     </p>
                                                 </div>
                                             </div>
+                                            <div className="mt-4 flex items-center gap-3">
+                                                <button
+
+                                                    type="button" onClick={() => {
+                                                        setCantidadesSeleccionadas((cantidadesActuales) => {
+                                                            const cantidadActual = cantidadesActuales[variante._id] || 0;
+
+                                                            if (cantidadActual <= 0) {
+                                                                return cantidadesActuales
+                                                            }
+
+                                                            return {
+                                                                ...cantidadesActuales,
+                                                                [variante._id]: cantidadActual - 1,
+
+                                                            }
+
+                                                        })
+
+                                                    }}
+                                                    className="flex h-8 w-8 items-center justify-center rounded-lg" ><Minus size={20} /></button>
+                                                <span className="min-w-5 text-center font-semibold text-slate-800">
+                                                    {cantidadesSeleccionadas[variante._id] || 0}
+                                                </span>
+                                                <button
+                                                    onClick={() => {
+                                                        setCantidadesSeleccionadas((cantidadesActuales) => {
+                                                            const cantidadActual = cantidadesActuales[variante._id] || 0;
+                                                            return {
+                                                                ...cantidadesActuales,
+                                                                [variante._id]: cantidadActual + 1
+                                                            }
+                                                        })
+                                                    }}
+                                                    type="button" className="flex h-8 w-8 items-center justify-center rounded-lg">
+                                                    <Plus size={20} /></button>
+                                            </div>
+
+                                            <div>
+                                                <span>Subtotal</span>
+                                                <p>
+                                                    {new Intl.NumberFormat("es-CO", {
+                                                        style: "currency",
+                                                        currency: "COP",
+                                                        maximumFractionDigits: 0
+                                                    }).format(
+                                                        variante.precio * (cantidadesSeleccionadas[variante._id] || 0)
+                                                    )}
+                                                </p>
+                                            </div>
+
                                         </div>
                                     ))}
                                 </div>
