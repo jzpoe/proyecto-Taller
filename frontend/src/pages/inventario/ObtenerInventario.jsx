@@ -1,6 +1,14 @@
+
 import { useEffect, useState } from "react";
 import { obtenerInventario } from "../../api/inventario";
-import { Plus, Package, HardDrive, Layers, Minus } from "lucide-react";
+import {
+    Plus,
+    Package,
+    HardDrive,
+    Layers,
+    Minus,
+    ChevronDown,
+} from "lucide-react";
 import { Modal } from "../../components/ui/Modal";
 import { InventarioPage } from "./Inventario";
 
@@ -8,22 +16,21 @@ export const ObtenerInventario = () => {
     const [productosInventario, setProductosInventario] = useState([]);
     const [modalAgregarInventario, setModalAgregarInventario] = useState(false);
     const [cantidadesSeleccionadas, setCantidadesSeleccionadas] = useState({});
+    const [productosExpandidos, setProductosExpandidos] = useState({});
 
-    const abrirModal = () => {
-        setModalAgregarInventario(true);
+    const abrirModal = () => setModalAgregarInventario(true);
+    const cerrarModal = () => setModalAgregarInventario(false);
+
+    const alternarProducto = (id) => {
+        setProductosExpandidos((actuales) => ({
+            ...actuales,
+            [id]: !actuales[id],
+        }));
     };
-
-    const cerrarModal = () => {
-        setModalAgregarInventario(false);
-    };
-
 
     const funcionObtenerProductos = async () => {
         try {
-
             const response = await obtenerInventario();
-
-            
             setProductosInventario(
                 Array.isArray(response) ? response : []
             );
@@ -35,15 +42,12 @@ export const ObtenerInventario = () => {
         }
     };
 
-
-
     useEffect(() => {
         funcionObtenerProductos();
     }, []);
 
     return (
         <div className="min-h-screen bg-slate-50 p-5 sm:p-8">
-
             {/* Encabezado */}
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -87,7 +91,7 @@ export const ObtenerInventario = () => {
                 </div>
             </div>
 
-            {/* Tarjetas */}
+            {/* Tarjetas desplegables */}
             {productosInventario.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
                     <Package
@@ -104,15 +108,22 @@ export const ObtenerInventario = () => {
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                     {productosInventario.map((producto) => (
                         <div
                             key={producto._id}
-                            className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
+                            className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-blue-200 hover:shadow-md"
                         >
-                            {/* Cabecera de tarjeta */}
-                            <div className="flex items-start gap-4 border-b border-slate-100 p-5">
-                                <div className="rounded-xl bg-blue-50 p-3 text-blue-600 transition group-hover:bg-blue-100">
+                            {/* Cabecera: siempre visible */}
+                            <button
+                                type="button"
+                                onClick={() => alternarProducto(producto._id)}
+                                aria-expanded={Boolean(
+                                    productosExpandidos[producto._id]
+                                )}
+                                className="flex w-full items-center gap-4 p-5 text-left transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-300"
+                            >
+                                <div className="rounded-xl bg-blue-50 p-3 text-blue-600">
                                     <HardDrive size={25} />
                                 </div>
 
@@ -124,130 +135,190 @@ export const ObtenerInventario = () => {
                                     <span className="mt-2 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
                                         {producto.categoria}
                                     </span>
-                                </div>
-                            </div>
 
-                            {/* Información de variantes */}
-                            <div className="p-5">
-                                <div className="mb-4 flex items-center gap-2">
-                                    <Layers size={17} className="text-slate-400" />
-
-                                    <h3 className="text-sm font-semibold text-slate-700">
-                                        Variantes
-                                    </h3>
-
-                                    <span className="ml-auto rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
-                                        {producto.variantes.length}
-                                    </span>
+                                    <p className="mt-2 text-xs text-slate-500">
+                                        {producto.variantes.length} variantes
+                                    </p>
                                 </div>
 
-                                <div className="space-y-3">
-                                    {producto.variantes.map((variante, index) => (
-                                        <div
-                                            key={variante._id || index}
-                                            className="rounded-xl bg-slate-50 p-4"
-                                        >
-                                            <p className="mb-3 text-sm font-semibold text-slate-700">
-                                                Variante {index + 1}
-                                            </p>
+                                <ChevronDown
+                                    size={22}
+                                    className={`shrink-0 text-slate-500 transition-transform duration-200 ${
+                                        productosExpandidos[producto._id]
+                                            ? "rotate-180"
+                                            : ""
+                                    }`}
+                                />
+                            </button>
 
-                                            <div className="mb-3 flex flex-wrap gap-2">
-                                                {Object.entries(
-                                                    variante.atributos || {}
-                                                ).map(([nombre, valor]) => (
-                                                    <span
-                                                        key={nombre}
-                                                        className="rounded-md border border-blue-100 bg-white px-2.5 py-1 text-xs text-blue-700"
+                            {/* Detalles: solo visibles al desplegar */}
+                            {productosExpandidos[producto._id] && (
+                                <div className="border-t border-slate-100 p-5">
+                                    <div className="mb-4 flex items-center gap-2">
+                                        <Layers
+                                            size={17}
+                                            className="text-slate-400"
+                                        />
+
+                                        <h3 className="text-sm font-semibold text-slate-700">
+                                            Variantes
+                                        </h3>
+
+                                        <span className="ml-auto rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+                                            {producto.variantes.length}
+                                        </span>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {producto.variantes.map(
+                                            (variante, index) => {
+                                                const cantidad =
+                                                    cantidadesSeleccionadas[
+                                                        variante._id
+                                                    ] || 0;
+
+                                                return (
+                                                    <div
+                                                        key={
+                                                            variante._id || index
+                                                        }
+                                                        className="rounded-xl bg-slate-50 p-4"
                                                     >
-                                                        {nombre}: {valor}
-                                                    </span>
-                                                ))}
+                                                        <p className="mb-3 text-sm font-semibold text-slate-700">
+                                                            Variante {index + 1}
+                                                        </p>
 
-                                            </div>
+                                                        <div className="mb-3 flex flex-wrap gap-2">
+                                                            {Object.entries(
+                                                                variante.atributos || {}
+                                                            ).map(
+                                                                ([nombre, valor]) => (
+                                                                    <span
+                                                                        key={nombre}
+                                                                        className="rounded-md border border-blue-100 bg-white px-2.5 py-1 text-xs text-blue-700"
+                                                                    >
+                                                                        {nombre}:{" "}
+                                                                        {valor}
+                                                                    </span>
+                                                                )
+                                                            )}
+                                                        </div>
 
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div>
-                                                    <p className="text-xs text-slate-500">
-                                                        Stock
-                                                    </p>
+                                                        <div className="grid grid-cols-2 gap-3">
+                                                            <div>
+                                                                <p className="text-xs text-slate-500">
+                                                                    Stock disponible
+                                                                </p>
 
-                                                    <p className="mt-1 font-semibold text-slate-800">
-                                                        {variante.stock - (cantidadesSeleccionadas[variante._id] || 0)} unidades
-                                                    </p>
-                                                </div>
+                                                                <p className="mt-1 font-semibold text-slate-800">
+                                                                    {Number(
+                                                                        variante.stock
+                                                                    ) - cantidad}{" "}
+                                                                    unidades
+                                                                </p>
+                                                            </div>
 
-                                                <div>
-                                                    <p className="text-xs text-slate-500">
-                                                        Precio
-                                                    </p>
+                                                            <div>
+                                                                <p className="text-xs text-slate-500">
+                                                                    Precio
+                                                                </p>
 
-                                                    <p className="mt-1 font-semibold text-emerald-700">
-                                                        {Number(variante.precio).toLocaleString(
-                                                            "es-CO",
-                                                            {
-                                                                style: "currency",
-                                                                currency: "COP",
-                                                                maximumFractionDigits: 0
-                                                            }
-                                                        )}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="mt-4 flex items-center gap-3">
-                                                <button
+                                                                <p className="mt-1 font-semibold text-emerald-700">
+                                                                    {Number(
+                                                                        variante.precio
+                                                                    ).toLocaleString(
+                                                                        "es-CO",
+                                                                        {
+                                                                            style: "currency",
+                                                                            currency: "COP",
+                                                                            maximumFractionDigits: 0,
+                                                                        }
+                                                                    )}
+                                                                </p>
+                                                            </div>
+                                                        </div>
 
-                                                    type="button" onClick={() => {
-                                                        setCantidadesSeleccionadas((cantidadesActuales) => {
-                                                            const cantidadActual = cantidadesActuales[variante._id] || 0;
+                                                        {/* Selección de cantidades */}
+                                                        <div className="mt-4 flex items-center gap-3">
+                                                            <button
+                                                                type="button"
+                                                                aria-label="Restar cantidad"
+                                                                disabled={cantidad <= 0}
+                                                                onClick={() =>
+                                                                    setCantidadesSeleccionadas(
+                                                                        (actuales) => ({
+                                                                            ...actuales,
+                                                                            [variante._id]:
+                                                                                Math.max(
+                                                                                    0,
+                                                                                    (actuales[
+                                                                                        variante._id
+                                                                                    ] || 0) - 1
+                                                                                ),
+                                                                        })
+                                                                    )
+                                                                }
+                                                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                                                            >
+                                                                <Minus size={18} />
+                                                            </button>
 
-                                                            if (cantidadActual <= 0) {
-                                                                return cantidadesActuales
-                                                            }
+                                                            <span className="min-w-5 text-center font-semibold text-slate-800">
+                                                                {cantidad}
+                                                            </span>
 
-                                                            return {
-                                                                ...cantidadesActuales,
-                                                                [variante._id]: cantidadActual - 1,
+                                                            <button
+                                                                type="button"
+                                                                aria-label="Sumar cantidad"
+                                                                disabled={cantidad >= Number(variante.stock)}
+                                                                onClick={() =>
+                                                                    setCantidadesSeleccionadas(
+                                                                        (actuales) => ({
+                                                                            ...actuales,
+                                                                            [variante._id]:
+                                                                                Math.min(
+                                                                                    Number(variante.stock),
+                                                                                    (actuales[
+                                                                                        variante._id
+                                                                                    ] || 0) + 1
+                                                                                ),
+                                                                        })
+                                                                    )
+                                                                }
+                                                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                                                            >
+                                                                <Plus size={18} />
+                                                            </button>
+                                                        </div>
 
-                                                            }
+                                                        {/* Subtotal */}
+                                                        <div className="mt-4 border-t border-slate-200 pt-3">
+                                                            <span className="text-xs text-slate-500">
+                                                                Subtotal
+                                                            </span>
 
-                                                        })
-
-                                                    }}
-                                                    className="flex h-8 w-8 items-center justify-center rounded-lg" ><Minus size={20} /></button>
-                                                <span className="min-w-5 text-center font-semibold text-slate-800">
-                                                    {cantidadesSeleccionadas[variante._id] || 0}
-                                                </span>
-                                                <button
-                                                    onClick={() => {
-                                                        setCantidadesSeleccionadas((cantidadesActuales) => {
-                                                            const cantidadActual = cantidadesActuales[variante._id] || 0;
-                                                            return {
-                                                                ...cantidadesActuales,
-                                                                [variante._id]: cantidadActual + 1
-                                                            }
-                                                        })
-                                                    }}
-                                                    type="button" className="flex h-8 w-8 items-center justify-center rounded-lg">
-                                                    <Plus size={20} /></button>
-                                            </div>
-
-                                            <div>
-                                                <span>Subtotal</span>
-                                                <p>
-                                                    {new Intl.NumberFormat("es-CO", {
-                                                        style: "currency",
-                                                        currency: "COP",
-                                                        maximumFractionDigits: 0
-                                                    }).format(
-                                                        variante.precio * (cantidadesSeleccionadas[variante._id] || 0)
-                                                    )}
-                                                </p>
-                                            </div>
-
-                                        </div>
-                                    ))}
+                                                            <p className="font-bold text-slate-800">
+                                                                {new Intl.NumberFormat(
+                                                                    "es-CO",
+                                                                    {
+                                                                        style: "currency",
+                                                                        currency: "COP",
+                                                                        maximumFractionDigits: 0,
+                                                                    }
+                                                                ).format(
+                                                                    Number(
+                                                                        variante.precio
+                                                                    ) * cantidad
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            }
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -261,9 +332,12 @@ export const ObtenerInventario = () => {
                 size="lg"
             >
                 <div className="p-5 sm:p-7">
-                    <InventarioPage />
+                    <InventarioPage
+                        alGuardar={funcionObtenerProductos}
+                    />
                 </div>
             </Modal>
         </div>
     );
 };
+

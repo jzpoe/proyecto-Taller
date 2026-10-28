@@ -28,11 +28,17 @@ const inventarioSchema = new mongoose.Schema({
                 min: 0,
                 default: 0
             },
-            precio:{
-               type: Number,
+            precio: {
+                type: Number,
                 required: true,
                 min: 0,
-                default: 0 
+                default: 0
+            },
+            costo: {
+                type: Number,
+                required: true,
+                min: 0,
+                default: 0
             }
         }
     ]

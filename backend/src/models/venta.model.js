@@ -33,8 +33,6 @@ const ventaSchema = new mongoose.Schema({
 
 
     }]
-
-
 },
 
     {

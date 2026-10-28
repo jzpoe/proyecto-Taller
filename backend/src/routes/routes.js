@@ -18,6 +18,7 @@ import { cambiarContrasena } from '../controllers/auth/cambiar.contrasena.js';
 import { inventario } from '../controllers/inventario/inventario.controller.js';
 import { obtener_inventario } from '../controllers/inventario/obtener_inventario.controller.js';
 import { inventario_id } from '../controllers/inventario/obtener_inventario_id.controller.js';
+import { ingresar_stock } from '../controllers/inventario/ingresar_stock.controller.js';
 
 const router = express.Router();
 
@@ -75,6 +76,8 @@ router.put("/ordenServicio/:id", verificarToken, actualizarOrdenServicio);
 router.post("/inventario", inventario);
 router.get("/inventario", obtener_inventario);
 router.put("/inventario/:id", inventario_id)
+
+router.post("/inventario/:id/stock", ingresar_stock);
 
 
 export default router;

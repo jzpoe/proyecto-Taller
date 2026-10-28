@@ -1,0 +1,22 @@
+export const catalogoProductos = [
+{ nombre: "Memoria RAM", categoria: "Componentes" },
+{ nombre: "Procesador", categoria: "Componentes" },
+{ nombre: "Tarjeta madre", categoria: "Componentes" },
+{ nombre: "Tarjeta gráfica", categoria: "Componentes" },
+{ nombre: "Fuente de poder", categoria: "Componentes" },
+{ nombre: "Disco duro HDD", categoria: "Almacenamiento" },
+{ nombre: "Unidad SSD SATA", categoria: "Almacenamiento" },
+{ nombre: "Unidad SSD M.2 NVMe", categoria: "Almacenamiento" },
+{ nombre: "Ventilador", categoria: "Refrigeración" },
+{ nombre: "Disipador", categoria: "Refrigeración" },
+{ nombre: "Pantalla para portátil", categoria: "Repuestos" },
+{ nombre: "Teclado para portátil", categoria: "Repuestos" },
+{ nombre: "Batería para portátil", categoria: "Repuestos" },
+{ nombre: "Cargador para portátil", categoria: "Accesorios" },
+{ nombre: "Mouse", categoria: "Periféricos" },
+{ nombre: "Teclado USB", categoria: "Periféricos" },
+{ nombre: "Monitor", categoria: "Periféricos" },
+{ nombre: "Cable HDMI", categoria: "Accesorios" },
+{ nombre: "Adaptador USB", categoria: "Accesorios" },
+{ nombre: "Cable de poder", categoria: "Accesorios" }
+];
