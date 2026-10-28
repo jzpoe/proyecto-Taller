@@ -3,14 +3,14 @@ const crearCliente = async (req, res) => {
     try {
         const clienteBody = req.body
         const validarCedula = await Cliente.findOne({ cedula: clienteBody.cedula })
-        if (validarCedula) {
-            return res.status(409).json({
-                message: "La cédula ya se encuentra registrada"
-            })
-        }
+        // if (validarCedula) {
+        //     return res.status(409).json({
+        //         message: "La cédula ya se encuentra registrada"
+        //     })
+        // }
             const crearCliente = new Cliente(clienteBody);
             await crearCliente.save();
-            return res.status(201).json({ message: "se ha creado exitosamente el CLIENTE" });
+            return res.status(201).json({ message: "se ha creado exitosamente el CLIENTE",crearCliente  });
 
         
 

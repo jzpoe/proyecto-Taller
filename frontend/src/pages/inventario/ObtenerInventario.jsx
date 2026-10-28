@@ -8,15 +8,34 @@ import {
     Layers,
     Minus,
     ChevronDown,
+    ShoppingCart, X
 } from "lucide-react";
 import { Modal } from "../../components/ui/Modal";
 import { InventarioPage } from "./Inventario";
+import { obtenerClientes, registrarVenta, crearCliente } from "../../api/ventas.api";
+
+
 
 export const ObtenerInventario = () => {
     const [productosInventario, setProductosInventario] = useState([]);
     const [modalAgregarInventario, setModalAgregarInventario] = useState(false);
     const [cantidadesSeleccionadas, setCantidadesSeleccionadas] = useState({});
     const [productosExpandidos, setProductosExpandidos] = useState({});
+    const [clientes, setClientes] = useState([]);
+    const [modalVenta, setModalVenta] = useState(false);
+    const [clienteSeleccionado, setClienteSeleccionado] = useState("");
+    const [guardandoVenta, setGuardandoVenta] = useState(false);
+    const [mensajeVenta, setMensajeVenta] = useState("");
+    const [mostrarFormularioCliente, setMostrarFormularioCliente] = useState(false);
+    const [guardandoCliente, setGuardandoCliente] = useState(false);
+
+    const [nuevoCliente, setNuevoCliente] = useState({
+        nombre: "",
+        telefono: "",
+        correo: ""
+    });
+
+    const [mensajeCliente, setMensajeCliente] = useState("");
 
     const abrirModal = () => setModalAgregarInventario(true);
     const cerrarModal = () => setModalAgregarInventario(false);
@@ -26,6 +45,133 @@ export const ObtenerInventario = () => {
             ...actuales,
             [id]: !actuales[id],
         }));
+    };
+
+    const abrirModalVenta = async () => {
+        try {
+            setMensajeVenta("");
+
+            const response = await obtenerClientes();
+            const lista = Array.isArray(response)
+                ? response
+                : response.clientes || [];
+
+            setClientes(lista);
+            setModalVenta(true);
+        } catch (error) {
+            console.error("Error al obtener clientes:", error);
+            setMensajeVenta("No fue posible cargar los clientes.");
+        }
+    };
+
+    const cerrarModalVenta = () => {
+        setModalVenta(false);
+        setClienteSeleccionado("");
+        setMensajeVenta("");
+    };
+
+    const guardarNuevoCliente = async (e) => {
+        e.preventDefault();
+
+        if (!nuevoCliente.nombre.trim() || !nuevoCliente.telefono.trim()) {
+            setMensajeCliente("El nombre y el teléfono son obligatorios.");
+            return;
+        }
+
+        try {
+            setGuardandoCliente(true);
+            setMensajeCliente("");
+
+            const response = await crearCliente({
+                nombre: nuevoCliente.nombre.trim(),
+                telefono: nuevoCliente.telefono.trim(),
+                correo: nuevoCliente.correo.trim()
+            });
+
+            // El controlador devuelve el cliente dentro de crearCliente.
+            const clienteCreado = response.crearCliente;
+
+            // Actualizar la lista de clientes.
+            const clientesActualizados = await obtenerClientes();
+
+            setClientes(
+                Array.isArray(clientesActualizados)
+                    ? clientesActualizados
+                    : clientesActualizados.clientes || []
+            );
+
+            // Seleccionar automáticamente al nuevo cliente.
+            setClienteSeleccionado(clienteCreado._id);
+
+            setNuevoCliente({
+                nombre: "",
+                telefono: "",
+                correo: ""
+            });
+
+            setMostrarFormularioCliente(false);
+            setMensajeCliente("");
+
+        } catch (error) {
+            console.error("Error al crear el cliente:", error);
+
+            setMensajeCliente(
+                error.response?.data?.message ||
+                "No fue posible registrar el cliente."
+            );
+        } finally {
+            setGuardandoCliente(false);
+        }
+    };
+
+    const registrarVentaSeleccionada = async () => {
+        if (!clienteSeleccionado) {
+            setMensajeVenta("Selecciona un cliente.");
+            return;
+        }
+
+        const productos = productosInventario.flatMap((producto) =>
+            producto.variantes
+                .filter((variante) => cantidadesSeleccionadas[variante._id] > 0)
+                .map((variante) => ({
+                    producto: producto._id,
+                    varianteId: variante._id,
+                    cantidad: cantidadesSeleccionadas[variante._id],
+                }))
+        );
+
+        if (productos.length === 0) {
+            setMensajeVenta("Selecciona al menos un producto.");
+            return;
+        }
+
+        try {
+            setGuardandoVenta(true);
+            setMensajeVenta("");
+
+            await registrarVenta({
+                cliente: clienteSeleccionado,
+                productos,
+            });
+
+            setCantidadesSeleccionadas({});
+            await funcionObtenerProductos();
+
+            cerrarModalVenta();
+            alert("Venta registrada correctamente.");
+        } catch (error) {
+            console.error("Error al registrar venta:", error);
+
+            setMensajeVenta(
+                error.response?.data?.message ||
+                "No fue posible registrar la venta."
+            );
+
+            // Refrescar el stock por si el servidor alcanzó a modificarlo.
+            await funcionObtenerProductos();
+        } finally {
+            setGuardandoVenta(false);
+        }
     };
 
     const funcionObtenerProductos = async () => {
@@ -63,15 +209,30 @@ export const ObtenerInventario = () => {
                         Consulta y administra los productos registrados.
                     </p>
                 </div>
+                <div className="flex flex-col gap-3 sm:flex-row">
 
-                <button
-                    type="button"
-                    onClick={abrirModal}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
-                >
-                    <Plus size={19} />
-                    Agregar inventario
-                </button>
+                    <button
+                        type="button"
+                        onClick={abrirModal}
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                    >
+                        <Plus size={19} />
+                        Agregar inventario
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={abrirModalVenta}
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                    >
+                        <ShoppingCart size={19} />
+                        Registrar venta
+                    </button>
+                </div>
+
+
+
+
             </div>
 
             {/* Resumen */}
@@ -143,11 +304,10 @@ export const ObtenerInventario = () => {
 
                                 <ChevronDown
                                     size={22}
-                                    className={`shrink-0 text-slate-500 transition-transform duration-200 ${
-                                        productosExpandidos[producto._id]
-                                            ? "rotate-180"
-                                            : ""
-                                    }`}
+                                    className={`shrink-0 text-slate-500 transition-transform duration-200 ${productosExpandidos[producto._id]
+                                        ? "rotate-180"
+                                        : ""
+                                        }`}
                                 />
                             </button>
 
@@ -174,7 +334,7 @@ export const ObtenerInventario = () => {
                                             (variante, index) => {
                                                 const cantidad =
                                                     cantidadesSeleccionadas[
-                                                        variante._id
+                                                    variante._id
                                                     ] || 0;
 
                                                 return (
@@ -335,6 +495,229 @@ export const ObtenerInventario = () => {
                     <InventarioPage
                         alGuardar={funcionObtenerProductos}
                     />
+                </div>
+            </Modal>
+
+            <Modal
+                isOpen={modalVenta}
+                onClose={cerrarModalVenta}
+                title="Registrar venta"
+                size="lg"
+            >
+                <div className="space-y-5 p-5">
+                    <div>
+                        <label
+                            htmlFor="clienteVenta"
+                            className="mb-2 block text-sm font-medium text-slate-700"
+                        >
+                            Cliente
+                        </label>
+
+                        <select
+                            id="clienteVenta"
+                            value={clienteSeleccionado}
+                            onChange={(e) => setClienteSeleccionado(e.target.value)}
+                            className="w-full rounded-xl border border-slate-300 bg-white p-3"
+                        >
+                            <option value="">Selecciona un cliente</option>
+
+                            {clientes.map((cliente) => (
+                                <option key={cliente._id} value={cliente._id}>
+                                    {cliente.nombre} — {cliente.telefono}
+                                </option>
+                            ))}
+                        </select>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setMostrarFormularioCliente(!mostrarFormularioCliente);
+                                setMensajeCliente("");
+                            }}
+                            className="mt-3 inline-flex items-center gap-2 rounded-lg border border-blue-200 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+                        >
+                            <Plus size={16} />
+                            {mostrarFormularioCliente ? "Cancelar creación" : "Crear cliente"}
+                        </button>
+
+                        {mostrarFormularioCliente && (
+                            <form
+                                onSubmit={guardarNuevoCliente}
+                                className="mt-4 space-y-3 rounded-xl border border-slate-200 bg-white p-4"
+                            >
+                                <h3 className="font-semibold text-slate-800">
+                                    Nuevo cliente
+                                </h3>
+
+                                <div>
+                                    <label className="mb-1 block text-sm text-slate-600">
+                                        Nombre completo *
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        value={nuevoCliente.nombre}
+                                        onChange={(e) =>
+                                            setNuevoCliente({
+                                                ...nuevoCliente,
+                                                nombre: e.target.value
+                                            })
+                                        }
+                                        required
+                                        className="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+                                        placeholder="Nombre del cliente"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="mb-1 block text-sm text-slate-600">
+                                        Teléfono *
+                                    </label>
+
+                                    <input
+                                        type="tel"
+                                        value={nuevoCliente.telefono}
+                                        onChange={(e) =>
+                                            setNuevoCliente({
+                                                ...nuevoCliente,
+                                                telefono: e.target.value
+                                            })
+                                        }
+                                        required
+                                        className="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+                                        placeholder="Número de teléfono"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="mb-1 block text-sm text-slate-600">
+                                        Correo electrónico (opcional)
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        value={nuevoCliente.correo}
+                                        onChange={(e) =>
+                                            setNuevoCliente({
+                                                ...nuevoCliente,
+                                                correo: e.target.value
+                                            })
+                                        }
+                                        className="w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500"
+                                        placeholder="correo@ejemplo.com"
+                                    />
+                                </div>
+
+                                {mensajeCliente && (
+                                    <p role="alert" className="text-sm text-red-600">
+                                        {mensajeCliente}
+                                    </p>
+                                )}
+
+                                <button
+                                    type="submit"
+                                    disabled={guardandoCliente}
+                                    className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+                                >
+                                    {guardandoCliente ? "Guardando cliente..." : "Guardar cliente"}
+                                </button>
+                            </form>
+                        )}
+
+                        {clientes.length === 0 && (
+                            <p className="mt-2 text-sm text-amber-700">
+                                No hay clientes registrados. Debes crear uno antes de vender.
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="rounded-xl bg-slate-50 p-4">
+                        <h3 className="mb-3 font-semibold text-slate-800">
+                            Resumen de productos
+                        </h3>
+
+                        {productosInventario.flatMap((producto) =>
+                            producto.variantes
+                                .filter(
+                                    (variante) =>
+                                        cantidadesSeleccionadas[variante._id] > 0
+                                )
+                                .map((variante) => (
+                                    <div
+                                        key={variante._id}
+                                        className="flex justify-between gap-4 border-b border-slate-200 py-2 text-sm"
+                                    >
+                                        <span>
+                                            {producto.nombre} (
+                                            {Object.values(variante.atributos || {}).join(", ")}
+                                            ) × {cantidadesSeleccionadas[variante._id]}
+                                        </span>
+
+                                        <span className="font-semibold">
+                                            {(
+                                                variante.precio *
+                                                cantidadesSeleccionadas[variante._id]
+                                            ).toLocaleString("es-CO", {
+                                                style: "currency",
+                                                currency: "COP",
+                                                maximumFractionDigits: 0,
+                                            })}
+                                        </span>
+                                    </div>
+                                ))
+                        )}
+
+                        <div className="mt-4 flex justify-between font-bold text-slate-800">
+                            <span>Total</span>
+
+                            <span>
+                                {productosInventario
+                                    .reduce(
+                                        (total, producto) =>
+                                            total +
+                                            producto.variantes.reduce(
+                                                (subtotal, variante) =>
+                                                    subtotal +
+                                                    Number(variante.precio) *
+                                                    (cantidadesSeleccionadas[variante._id] || 0),
+                                                0
+                                            ),
+                                        0
+                                    )
+                                    .toLocaleString("es-CO", {
+                                        style: "currency",
+                                        currency: "COP",
+                                        maximumFractionDigits: 0,
+                                    })}
+                            </span>
+                        </div>
+                    </div>
+
+                    {mensajeVenta && (
+                        <p role="alert" className="text-sm text-red-600">
+                            {mensajeVenta}
+                        </p>
+                    )}
+
+                    <div className="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            onClick={cerrarModalVenta}
+                            disabled={guardandoVenta}
+                            className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700"
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={registrarVentaSeleccionada}
+                            disabled={guardandoVenta || clientes.length === 0}
+                            className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                        >
+                            {guardandoVenta ? "Registrando..." : "Confirmar venta"}
+                        </button>
+                    </div>
                 </div>
             </Modal>
         </div>

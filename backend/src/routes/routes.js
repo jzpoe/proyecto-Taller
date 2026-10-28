@@ -19,6 +19,7 @@ import { inventario } from '../controllers/inventario/inventario.controller.js';
 import { obtener_inventario } from '../controllers/inventario/obtener_inventario.controller.js';
 import { inventario_id } from '../controllers/inventario/obtener_inventario_id.controller.js';
 import { ingresar_stock } from '../controllers/inventario/ingresar_stock.controller.js';
+import { crearVenta } from '../controllers/ventas/ventas.controller.js';
 
 const router = express.Router();
 
@@ -78,6 +79,10 @@ router.get("/inventario", obtener_inventario);
 router.put("/inventario/:id", inventario_id)
 
 router.post("/inventario/:id/stock", ingresar_stock);
+
+
+//ventas
+router.post("/ventas", verificarToken, crearVenta);
 
 
 export default router;
